@@ -1038,9 +1038,19 @@
 
   // Draw Jams dynamically
   function drawJams() {
-    const easyPool = state.jamsPool.filter(j => j.type === 'easy');
-    const mediumPool = state.jamsPool.filter(j => j.type === 'medium');
-    const hardPool = state.jamsPool.filter(j => j.type === 'hard');
+    let easyPool = state.jamsPool.filter(j => j.type === 'easy');
+    let mediumPool = state.jamsPool.filter(j => j.type === 'medium');
+    let hardPool = state.jamsPool.filter(j => j.type === 'hard');
+
+    // Fallback: If we don't have enough medium Jams, borrow from easyPool to prevent crash
+    if (mediumPool.length < 9) {
+      const needed = 9 - mediumPool.length;
+      if (easyPool.length > 1) {
+        const borrowed = easyPool.slice(1, 1 + needed);
+        mediumPool = [...mediumPool, ...borrowed];
+        easyPool = easyPool.filter(e => !borrowed.some(b => b.id === e.id));
+      }
+    }
 
     if (easyPool.length < 1 || mediumPool.length < 9 || hardPool.length < 4) {
       alert(`Erro: Você precisa de pelo menos 1 Easy, 9 Medium e 4 Hard cadastrados no catálogo para sortear.

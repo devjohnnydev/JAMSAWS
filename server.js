@@ -37,7 +37,10 @@ app.get('/api/jams', (req, res) => {
           id: item.challengeId + '_' + item.task.taskNumber,
           type: type,
           name: `${item.task.title} [${item.challengeId}]`,
-          content: item.task.content || ''
+          content: item.task.content || '',
+          validationCode: item.task.validationFunction || '',
+          validationType: item.task.validationType || '',
+          runtime: item.task.validationFunctionRuntime || ''
         });
       }
     });

@@ -756,6 +756,7 @@
     </div>
     <h1>⚡ JamRun 14 Timer</h1>
     <p>Simulador Preparatório: Complete 14 Jams em menos de 1 hora! (4 Hard, 9 Medium, 1 Easy). Menos dicas = melhor classificação.</p>
+    <div id="google_translate_element" style="margin-top: 15px;"></div>
   </header>
 
   <div class="tabs">
@@ -1830,6 +1831,16 @@ Atualmente você tem:
     });
   }
 
+  function escapeHtml(text) {
+    if (!text) return '';
+    return text
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+  }
+
   function selectLibraryJam(jamId, element) {
     document.querySelectorAll('.lib-list-item').forEach(x => x.classList.remove('active'));
     if (element) element.classList.add('active');
@@ -1864,6 +1875,11 @@ Atualmente você tem:
     if (jam.type === 'medium') diffColor = 'var(--medium)';
     if (jam.type === 'hard') diffColor = 'var(--hard)';
 
+    // Build the validation code presentation block
+    const codeBlock = jam.validationCode 
+      ? `<pre style="background: #07090e; border: 1px solid rgba(255,255,255,0.06); padding: 15px; border-radius: 10px; overflow-x: auto; font-family: monospace; font-size: 0.8rem; line-height: 1.5; color: #818cf8; max-height: 350px; text-align: left; white-space: pre;">${escapeHtml(jam.validationCode)}</pre>`
+      : `<p style="font-size: 0.85rem; color: var(--text-muted); font-style: italic;">Verificação estática manual do resultado do desafio.</p>`;
+
     detailContainer.innerHTML = `
       <h2 style="font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 15px;">${jam.name}</h2>
       
@@ -1875,6 +1891,10 @@ Atualmente você tem:
         <div class="lib-meta-box">
           <div class="hud-label">Tempo Recomendado</div>
           <div class="lib-meta-val">${targetTime}</div>
+        </div>
+        <div class="lib-meta-box">
+          <div class="hud-label">Tipo Validação</div>
+          <div class="lib-meta-val" style="color: var(--accent); font-size: 0.8rem;">${jam.validationType || 'GLOBAL_STATIC'}</div>
         </div>
       </div>
 
@@ -1888,6 +1908,11 @@ Atualmente você tem:
         <p style="font-size: 0.88rem; color: var(--text); line-height: 1.4;">${validation}</p>
       </div>
 
+      <div style="margin-bottom: 20px;">
+        <h3 style="font-size: 1rem; color: #fff; margin-bottom: 10px;">💻 Código / Script de Validação do AWS Lambda:</h3>
+        ${codeBlock}
+      </div>
+
       <div>
         <h3 style="font-size: 1rem; color: #fff; margin-bottom: 10px;">📋 Instruções Completas do Desafio:</h3>
         <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; max-height: 350px; overflow-y: auto; font-size: 0.85rem; line-height: 1.6; white-space: pre-wrap; color: var(--text-muted);">
@@ -1897,9 +1922,19 @@ Atualmente você tem:
     `;
   }
 
+  // Google Translate initialization callback
+  window.googleTranslateElementInit = function() {
+    new google.translate.TranslateElement({
+      pageLanguage: 'en',
+      includedLanguages: 'pt,en',
+      layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+    }, 'google_translate_element');
+  }
+
   // Load storage state
   loadState();
   renderLeaderboard();
 </script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>

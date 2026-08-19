@@ -748,6 +748,11 @@
               <span id="active-jam-badge" class="diff">EASY</span>
               <span id="active-jam-name">Jam #1</span>
             </div>
+
+            <!-- Scrollable Challenge instructions reader -->
+            <div id="active-jam-description" style="text-align: left; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; max-height: 280px; overflow-y: auto; margin-bottom: 15px; font-size: 0.85rem; line-height: 1.5; white-space: pre-wrap; color: var(--text-muted);">
+              Nenhuma instrução disponível para este desafio.
+            </div>
             
             <div class="jam-timer" id="jam-timer-display">00:00</div>
 
@@ -966,7 +971,7 @@
     leaderboard: [],
     currentSession: null,
     jamsPool: [...DEFAULT_JAMS_POOL],
-    weakJams: [] // List of jam names that had difficulties
+    weakJams: []
   };
 
   // State persistence
@@ -979,6 +984,19 @@
       state.jamsPool = parsed.jamsPool || [...DEFAULT_JAMS_POOL];
       state.weakJams = parsed.weakJams || [];
     }
+    
+    // Attempt to load Jams catalog from backend JSON file
+    fetch('/api/jams')
+      .then(r => r.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          state.jamsPool = data;
+          saveState();
+          renderJamsPool();
+        }
+      })
+      .catch(err => console.log('Running locally or standalone mode: Using pre-configured Jams pool.'));
+
     updateRetrainHUD();
   }
 
@@ -1018,8 +1036,7 @@
     if (tabId === 'competicao') updateRetrainHUD();
   }
 
-  // Draw Jams dynamically based on ratio: 1 Easy, 9 Medium, 4 Hard
-  // Prioritizing weakJams if retrain mode is active.
+  // Draw Jams dynamically
   function drawJams() {
     const easyPool = state.jamsPool.filter(j => j.type === 'easy');
     const mediumPool = state.jamsPool.filter(j => j.type === 'medium');
@@ -1040,12 +1057,10 @@ Atualmente você tem:
       let selected = [];
       
       if (useRetrain && state.weakJams.length > 0) {
-        // Find weak jams that belong to this difficulty level and are in the active pool
         const matchingWeak = pool.filter(j => state.weakJams.includes(j.name));
         selected.push(...matchingWeak.slice(0, count));
       }
 
-      // Fill remaining spots randomly
       const remainingCount = count - selected.length;
       if (remainingCount > 0) {
         const remainingPool = pool.filter(j => !selected.some(s => s.id === j.id));
@@ -1069,7 +1084,8 @@ Atualmente você tem:
       completed: false,
       timeSpent: 0,
       errors: 0,
-      hints: 0
+      hints: 0,
+      content: jam.content || ''
     }));
   }
 
@@ -1203,6 +1219,10 @@ Atualmente você tem:
     document.getElementById('active-jam-card').style.display = 'block';
     document.getElementById('active-jam-name').textContent = jam.name;
     
+    // Inject and format Jam instructions description block
+    const descEl = document.getElementById('active-jam-description');
+    descEl.textContent = jam.content || "Nenhuma instrução ou descrição disponível para este desafio.";
+    
     const badge = document.getElementById('active-jam-badge');
     badge.className = `diff ${jam.type}`;
     badge.textContent = jam.type;
@@ -1314,18 +1334,6 @@ Atualmente você tem:
     }
   }
 
-  function abandonSession() {
-    if (!confirm('Deseja realmente abandonar esta competição? Seu progresso atual será perdido.')) return;
-    
-    if (sessionTimerInterval) clearInterval(sessionTimerInterval);
-    if (jamTimerInterval) clearInterval(jamTimerInterval);
-
-    state.currentSession = null;
-    document.getElementById('setup-card').style.display = 'block';
-    document.getElementById('active-session-area').style.display = 'none';
-    saveState();
-  }
-
   // End Session
   function endSession(isTimeout) {
     if (sessionTimerInterval) clearInterval(sessionTimerInterval);
@@ -1348,10 +1356,7 @@ Atualmente você tem:
       jams: session.jams
     };
 
-    // --- SPACED REPETITION / WEAK POINT TRACKING ---
-    // Identify difficult Jams:
-    // Any Jam where hints > 0, errors > 0, or time taken is slow:
-    // (Easy > 90s, Medium > 210s, Hard > 420s)
+    // Track points of difficulties
     session.jams.forEach(jam => {
       const isSlow = (jam.type === 'hard' && jam.timeSpent > 420) || 
                      (jam.type === 'medium' && jam.timeSpent > 210) || 
@@ -1364,7 +1369,6 @@ Atualmente você tem:
           state.weakJams.push(jam.name);
         }
       } else {
-        // If they did it perfectly (no hints, no errors, fast), remove it from weakJams list!
         state.weakJams = state.weakJams.filter(name => name !== jam.name);
       }
     });
@@ -1384,7 +1388,7 @@ Atualmente você tem:
     state.currentSession = null;
     saveState();
 
-    // Setup success UI modal
+    // Setup success UI
     const titleEl = document.getElementById('modal-title');
     const textEl = document.getElementById('modal-text');
 
@@ -1408,6 +1412,18 @@ Atualmente você tem:
     document.getElementById('active-session-area').style.display = 'none';
   }
 
+  function abandonSession() {
+    if (!confirm('Deseja realmente abandonar esta competição? Seu progresso atual será perdido.')) return;
+    
+    if (sessionTimerInterval) clearInterval(sessionTimerInterval);
+    if (jamTimerInterval) clearInterval(jamTimerInterval);
+
+    state.currentSession = null;
+    document.getElementById('setup-card').style.display = 'block';
+    document.getElementById('active-session-area').style.display = 'none';
+    saveState();
+  }
+
   function closeModal() {
     document.getElementById('completion-modal').classList.remove('active');
     switchTab('leaderboard');
@@ -1419,7 +1435,6 @@ Atualmente você tem:
     return `${min}m ${sec}s`;
   }
 
-  // Populate leaderboard with mock competitors
   function seedCompetitors() {
     const mockCompetitors = [
       {
@@ -1507,7 +1522,6 @@ Atualmente você tem:
       tbody.appendChild(row);
     });
 
-    // Populate quick dashboard preview
     const quickList = document.getElementById('quick-leaderboard');
     if (quickList) {
       quickList.innerHTML = '';
@@ -1548,13 +1562,11 @@ Atualmente você tem:
     document.getElementById('metric-total-hints').textContent = `${run.totalHints} dica(s)`;
     document.getElementById('metric-total-errors').textContent = `${run.totalErrors} erro(s)`;
 
-    // Calculate dynamic Study Plan recommendations
     const studyPlanEl = document.getElementById('study-recommendation');
     const studyTextEl = document.getElementById('study-recommendation-text');
     
     let recommendationHTML = "";
     
-    // Check which Jams are currently saved as Weak Jams
     if (state.weakJams.length > 0) {
       recommendationHTML += `⚠️ <strong>Jams marcados para Retreino (${state.weakJams.length}):</strong><br>`;
       recommendationHTML += `<ul style="margin-left: 20px; margin-top: 5px; margin-bottom: 15px;">`;
@@ -1609,7 +1621,6 @@ Atualmente você tem:
     });
   }
 
-  // JAMS POOL CUSTOMIZER ACTIONS
   function renderJamsPool() {
     const listContainer = document.getElementById('jams-pool-list-container');
     listContainer.innerHTML = '';
@@ -1650,7 +1661,8 @@ Atualmente você tem:
     const newJam = {
       id: "pool_" + Date.now() + "_" + Math.random().toString(36).substr(2, 4),
       type: type,
-      name: name
+      name: name,
+      content: ''
     };
 
     state.jamsPool.push(newJam);
@@ -1675,7 +1687,7 @@ Atualmente você tem:
     renderJamsPool();
   }
 
-  // Load storage state on boot
+  // Load storage state
   loadState();
   renderLeaderboard();
 </script>

@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ JamRun 14 — Competição de Velocidade</title>
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #090b11;
+      --card-bg: rgba(22, 26, 37, 0.65);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.35);
+      
+      --easy: #10b981;
+      --medium: #f59e0b;
+      --hard: #ef4444;
+      
+      --easy-bg: rgba(16, 185, 129, 0.15);
+      --medium-bg: rgba(245, 158, 11, 0.15);
+      --hard-bg: rgba(239, 68, 68, 0.15);
+
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      
+      --glass: backdrop-filter: blur(16px) saturate(180%);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, var(--bg) 70%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, .font-outfit {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      position: relative;
+    }
+
+    .logo-container {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      padding: 8px 18px;
+      border-radius: 100px;
+      margin-bottom: 15px;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.1);
+    }
+
+    .logo-badge {
+      background: var(--accent);
+      color: #fff;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+    }
+
+    header h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 30%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Grid Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    @media (min-width: 900px) {
+      .dashboard-grid {
+        grid-template-columns: 2fr 1fr;
+      }
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 24px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .card:hover {
+      border-color: rgba(99, 102, 241, 0.2);
+    }
+
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 12px;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 6px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 8px;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: all 0.2s;
+      font-size: 0.95rem;
+      min-width: 120px;
+    }
+
+    .tab.active {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+
+    /* Inputs & Buttons */
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.2);
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      width: 100%;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      color: #fff;
+      box-shadow: 0 4px 15px var(--accent-glow);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .btn-red {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: #fff;
+    }
+
+    .btn-red:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+    }
+
+    .btn-green {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #fff;
+    }
+
+    .btn-green:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+    }
+
+    /* Timers & HUD */
+    .hud {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .hud-stat {
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .hud-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .hud-value {
+      font-size: 2.2rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .hud-value.critical {
+      color: var(--hard);
+      animation: pulse 1s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { opacity: 1; }
+      to { opacity: 0.6; }
+    }
+
+    /* Jam Progress Tracker */
+    .jams-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .jam-node {
+      height: 68px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      background: rgba(255, 255, 255, 0.02);
+      transition: all 0.2s;
+    }
+
+    .jam-node.easy { border-color: rgba(16, 185, 129, 0.3); }
+    .jam-node.medium { border-color: rgba(245, 158, 11, 0.3); }
+    .jam-node.hard { border-color: rgba(239, 68, 68, 0.3); }
+
+    .jam-node.active {
+      box-shadow: 0 0 15px var(--accent-glow);
+      border-color: var(--accent);
+      background: rgba(99, 102, 241, 0.15);
+      transform: scale(1.05);
+    }
+
+    .jam-node.completed {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: var(--easy);
+    }
+
+    .jam-node .num {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .jam-node .diff {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 1px 4px;
+      border-radius: 4px;
+      margin-top: 2px;
+    }
+
+    .diff.easy { background: var(--easy-bg); color: #6ee7b7; }
+    .diff.medium { background: var(--medium-bg); color: #fde047; }
+    .diff.hard { background: var(--hard-bg); color: #fca5a5; }
+
+    .jam-node .status-dot {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--text-muted);
+    }
+
+    .jam-node.completed .status-dot {
+      background: var(--easy);
+    }
+
+    /* Active Jam Controls */
+    .active-jam-card {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(22, 26, 37, 0.8) 100%);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .active-jam-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .jam-timer {
+      font-size: 3.5rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      margin: 15px 0;
+      font-family: 'Outfit', sans-serif;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    }
+
+    .controls-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    /* Error & Hint Widget Box */
+    .widgets-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      margin: 15px auto;
+      flex-wrap: wrap;
+    }
+
+    .widget-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 12px;
+      padding: 8px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .widget-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .widget-count {
+      font-size: 1.2rem;
+      font-weight: 800;
+    }
+
+    .widget-count.red { color: var(--hard); }
+    .widget-count.yellow { color: var(--medium); }
+
+    .btn-widget-action {
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.8rem;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .btn-widget-error {
+      background: var(--hard-bg);
+      color: var(--hard);
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-widget-error:hover {
+      background: var(--hard);
+      color: #fff;
+    }
+
+    .btn-widget-hint {
+      background: var(--medium-bg);
+      color: var(--medium);
+      border-color: rgba(245, 158, 11, 0.3);
+    }
+
+    .btn-widget-hint:hover {
+      background: var(--medium);
+      color: #fff;
+    }
+
+    /* Tables & Leaderboard */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th, td {
+      padding: 14px 12px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    th {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .rank-num {
+      font-weight: 800;
+      font-size: 1.1rem;
+      width: 40px;
+    }
+
+    .gold { color: #fbbf24; }
+    .silver { color: #9ca3af; }
+    .bronze { color: #b45309; }
+
+    /* Custom CSS Visual Metrics Chart */
+    .metrics-chart-container {
+      margin-top: 24px;
+    }
+
+    .chart-bar-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 12px;
+    }
+
+    .chart-label {
+      width: 180px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chart-bar-wrapper {
+      flex: 1;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .chart-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 6px;
+      transition: width 0.4s ease;
+      display: flex;
+      align-items: center;
+      padding-left: 10px;
+    }
+
+    .chart-bar-val {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    }
+
+    .chart-error-dots {
+      display: flex;
+      gap: 4px;
+      margin-left: 8px;
+    }
+
+    .error-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--hard);
+    }
+
+    .hint-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--medium);
+    }
+
+    /* Study Plan Recommendation Box */
+    .recommendation-box {
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      border-radius: 14px;
+      padding: 16px;
+      margin-top: 24px;
+    }
+
+    .recommendation-title {
+      font-weight: 700;
+      color: #a5b4fc;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Modal / Alert overlays */
+    .overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      backdrop-filter: blur(10px);
+    }
+
+    .overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background: #111422;
+      border: 1px solid var(--accent);
+      border-radius: 24px;
+      padding: 35px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 0 40px rgba(99, 102, 241, 0.2);
+    }
+
+    .modal-title {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 15px;
+      color: #fff;
+    }
+
+    .modal-text {
+      color: var(--text-muted);
+      margin-bottom: 25px;
+      line-height: 1.5;
+    }
+
+    /* Panel visibility toggles */
+    .app-panel {
+      display: none;
+    }
+
+    .app-panel.active {
+      display: block;
+    }
+
+    .badge-diff {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .pool-list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .retrain-alert {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 15px;
+      font-size: 0.85rem;
+      color: #fde047;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="logo-container">
+      <span class="logo-badge">DESAFIO</span>
+      <span style="font-weight: 700; font-size: 0.9rem; color: #a5b4fc;">JAMRUN 14</span>
+    </div>
+    <h1>⚡ JamRun 14 Timer</h1>
+    <p>Simulador Preparatório: Complete 14 Jams em menos de 1 hora! (4 Hard, 9 Medium, 1 Easy). Menos dicas = melhor classificação.</p>
+  </header>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('competicao')">⏱️ Competição</div>
+    <div class="tab" onclick="switchTab('leaderboard')">🏆 Placar Geral</div>
+    <div class="tab" onclick="switchTab('metricas')">📊 Minhas Métricas</div>
+    <div class="tab" onclick="switchTab('customizer')">⚙️ Customizar Jams</div>
+  </div>
+
+  <!-- PANEL: COMPETIÇÃO -->
+  <div id="panel-competicao" class="app-panel active">
+    <div class="dashboard-grid">
+      <!-- Painel Principal de Corrida -->
+      <div>
+        <!-- Setup Inicial -->
+        <div id="setup-card" class="card" style="margin-bottom: 24px;">
+          <h2 class="card-title">📝 Registrar Corredor</h2>
+          <div class="form-group">
+            <label for="student-name">NOME DO ALUNO / COMPETIDOR</label>
+            <input type="text" id="student-name" placeholder="Digite seu nome ou apelido...">
+          </div>
+          
+          <div class="form-group" style="margin-top: 15px; display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox" id="enable-retrain-mode" checked style="width: auto; cursor: pointer;">
+            <label for="enable-retrain-mode" style="margin-bottom: 0; cursor: pointer; color: #fff; font-weight: 600;">
+              🧠 Ativar Foco nos Pontos Fracos (Priorizar Jams com dificuldades anteriores)
+            </label>
+          </div>
+
+          <div id="retrain-status-box" class="retrain-alert" style="display: none;">
+            <span>⚠️</span>
+            <div>Você possui <strong id="retrain-jams-count">0</strong> Jams pendentes na lista de dificuldades. Eles serão prioritariamente reinjetados no seu próximo sorteio para você memorizar e melhorar seu tempo.</div>
+          </div>
+
+          <button class="btn btn-primary" onclick="startSession()" style="margin-top: 20px;">🎲 Sortear 14 Jams e Iniciar Desafio (1h)</button>
+        </div>
+
+        <!-- Session Status (HUD & Active Jam) -->
+        <div id="active-session-area" style="display: none;">
+          <!-- HUD da Sessão -->
+          <div class="hud">
+            <div class="hud-stat">
+              <div class="hud-label">Tempo Restante (Sessão)</div>
+              <div id="session-countdown" class="hud-value">60:00</div>
+            </div>
+            <div class="hud-stat">
+              <div class="hud-label">Jams Concluídos</div>
+              <div class="hud-value"><span id="jams-done-count">0</span>/14</div>
+            </div>
+            <div class="hud-stat">
+              <div class="hud-label">Dicas Utilizadas</div>
+              <div id="session-hints-hud" class="hud-value" style="color: var(--medium)">0</div>
+            </div>
+          </div>
+
+          <!-- Seletor de Jams -->
+          <div class="card" style="margin-bottom: 24px;">
+            <h3 class="card-title" style="font-size: 1.1rem; margin-bottom: 15px;">Selecione o Jam para Resolver</h3>
+            <div class="jams-grid" id="jams-nodes-container">
+              <!-- JS auto generates nodes -->
+            </div>
+          </div>
+
+          <!-- Active Jam Controller -->
+          <div class="active-jam-card" id="active-jam-card" style="display: none;">
+            <div class="active-jam-title">
+              <span id="active-jam-badge" class="diff">EASY</span>
+              <span id="active-jam-name">Jam #1</span>
+            </div>
+            
+            <div class="jam-timer" id="jam-timer-display">00:00</div>
+
+            <div class="widgets-container">
+              <div class="widget-box">
+                <span class="widget-title">Erros:</span>
+                <span class="widget-count red" id="active-jam-errors">0</span>
+                <button class="btn-widget-action btn-widget-error" onclick="incrementActiveError()">+1 Erro</button>
+              </div>
+
+              <div class="widget-box">
+                <span class="widget-title">Dicas:</span>
+                <span class="widget-count yellow" id="active-jam-hints">0</span>
+                <button class="btn-widget-action btn-widget-hint" onclick="useActiveHint()">💡 Pedir Dica (+1m)</button>
+              </div>
+            </div>
+
+            <div class="controls-row">
+              <button class="btn btn-secondary" onclick="pauseOrResumeJam()" id="btn-pause-jam">Pausar</button>
+              <button class="btn btn-green" onclick="completeActiveJam()">Concluir Jam ✅</button>
+            </div>
+          </div>
+          
+          <button class="btn btn-red" onclick="abandonSession()" style="margin-bottom: 24px;">Abandonar Competição ✕</button>
+        </div>
+      </div>
+
+      <!-- Lado: Regras e Infos Rápidas -->
+      <div>
+        <div class="card" style="margin-bottom: 24px;">
+          <h2 class="card-title">📋 Regras do Simulador</h2>
+          <ul style="padding-left: 18px; line-height: 1.6; font-size: 0.9rem; color: var(--text-muted);">
+            <li style="margin-bottom: 8px;"><strong style="color:#fff">Objetivo Principal:</strong> Agilidade e precisão. Termine os 14 Jams em até 60 minutos sem depender de dicas.</li>
+            <li style="margin-bottom: 8px;"><strong style="color:#fff">Foco nos Pontos Fracos:</strong> Jams com erros, dicas ou tempos muito lentos são salvos e **reinjetados no próximo sorteio** até que você os resolva perfeitamente!</li>
+            <li style="margin-bottom: 8px;"><strong style="color:#fff">Dicas tem Custo:</strong> Pedir uma dica adiciona **+1 minuto** de penalidade ao tempo de resolução do Jam ativo.</li>
+            <li style="margin-bottom: 8px;"><strong style="color:#fff">Desempate no Placar:</strong>
+              <div style="margin-top: 4px; display: flex; flex-direction: column; gap: 2px;">
+                <span>1. Mais Jams concluídos (Max 14)</span>
+                <span style="color: var(--medium)">2. Menos dicas usadas (Prioridade!)</span>
+                <span>3. Menor tempo total decorrido</span>
+                <span>4. Menos erros cometidos</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">⚡ Placar Rápido (Live)</h2>
+          <div id="quick-leaderboard" style="font-size: 0.9rem;">
+            <!-- Renderized via JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL: LEADERBOARD -->
+  <div id="panel-leaderboard" class="app-panel">
+    <div class="card">
+      <div class="card-title">
+        <span>🏆 Ranking de Competidores</span>
+        <button class="btn btn-secondary" onclick="seedCompetitors()" style="width: auto; padding: 6px 12px; font-size: 0.8rem;">Adicionar Competidores Demo</button>
+      </div>
+      <div style="overflow-x: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Posição</th>
+              <th>Nome</th>
+              <th>Jams Concluídos</th>
+              <th>Dicas Usadas</th>
+              <th>Tempo Total (+Penalidades)</th>
+              <th>Total de Erros</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-body">
+            <!-- JS populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL: METRICAS -->
+  <div id="panel-metricas" class="app-panel">
+    <div class="card" style="margin-bottom: 24px;">
+      <h2 class="card-title">📊 Visão Geral da Última Corrida</h2>
+      <div class="hud" id="metrics-summary-hud">
+        <div class="hud-stat">
+          <div class="hud-label">Tempo Decorrido</div>
+          <div id="metric-total-time" class="hud-value">—</div>
+        </div>
+        <div class="hud-stat">
+          <div class="hud-label">Total de Dicas</div>
+          <div id="metric-total-hints" class="hud-value" style="color: var(--medium)">—</div>
+        </div>
+        <div class="hud-stat">
+          <div class="hud-label">Total de Erros</div>
+          <div id="metric-total-errors" class="hud-value">—</div>
+        </div>
+      </div>
+
+      <!-- Recommendation / Study Plan section -->
+      <div id="study-recommendation" class="recommendation-box" style="display: none;">
+        <div class="recommendation-title">🎯 Plano de Estudo & Retreino</div>
+        <div id="study-recommendation-text" style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">⏱️ Tempo, Dicas (🟡) e Erros (🔴) por Jam (Última Corrida)</h2>
+      <div id="metrics-chart-container" class="metrics-chart-container">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL: CUSTOMIZER -->
+  <div id="panel-customizer" class="app-panel">
+    <div class="card" style="margin-bottom: 24px;">
+      <h2 class="card-title">➕ Adicionar Novo Jam ao Catálogo</h2>
+      <div class="form-group">
+        <label for="new-jam-name">NOME / TÍTULO DO JAM</label>
+        <input type="text" id="new-jam-name" placeholder="Ex: Jam 15 - API Integration">
+      </div>
+      <div class="form-group">
+        <label for="new-jam-type">DIFICULDADE</label>
+        <select id="new-jam-type">
+          <option value="easy">Easy (Fácil)</option>
+          <option value="medium" selected>Medium (Médio)</option>
+          <option value="hard">Hard (Difícil)</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" onclick="addCustomJam()">Adicionar ao Catálogo</button>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">📋 Catálogo de Jams Cadastrados (<span id="total-pool-count">0</span> Jams)</h2>
+      <div style="margin-bottom: 15px; color: var(--text-muted); font-size: 0.9rem;">
+        Distribuição atual: 
+        <span style="color: var(--easy);">🟢 <span id="pool-easy-count">0</span> Easy</span> | 
+        <span style="color: var(--medium);">🟡 <span id="pool-medium-count">0</span> Medium</span> | 
+        <span style="color: var(--hard);">🔴 <span id="pool-hard-count">0</span> Hard</span>
+      </div>
+      <div id="jams-pool-list-container" style="max-height: 400px; overflow-y: auto; background: rgba(0,0,0,0.15); border-radius: 10px; padding: 10px;">
+        <!-- JS populated list -->
+      </div>
+      <button class="btn btn-secondary" onclick="resetJamPoolToDefault()" style="margin-top: 15px;">↺ Resetar Catálogo para o Padrão</button>
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY / MODAL -->
+<div class="overlay" id="completion-modal">
+  <div class="modal-content">
+    <div class="modal-title" id="modal-title">🏆 Parabéns!</div>
+    <div class="modal-text" id="modal-text">Você completou o JamRun 14! Veja seus tempos e sua posição no ranking geral.</div>
+    <button class="btn btn-primary" onclick="closeModal()">Ver Resultados</button>
+  </div>
+</div>
+
+<script>
+  // Web Audio Context for Alarm
+  let audioCtx = null;
+  function playAlertBeep(frequency = 440, duration = 0.15, type = 'sine') {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      
+      osc.type = type;
+      osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+      
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    } catch (e) {
+      console.warn("Audio Context blocked or unsupported:", e);
+    }
+  }
+
+  // Prepopulated Default Catalog Pool
+  const DEFAULT_JAMS_POOL = [
+    { id: "p1", type: "easy", name: "Jam 1 - Inicialização & Config" },
+    { id: "p2", type: "easy", name: "Jam 2 - Sintaxe Básica" },
+    { id: "p3", type: "easy", name: "Jam 3 - Loops Simples" },
+    { id: "p4", type: "easy", name: "Jam 4 - Condicionais Básicas" },
+    
+    { id: "p5", type: "medium", name: "Jam 5 - Arrays 1D" },
+    { id: "p6", type: "medium", name: "Jam 6 - Manipulação de Strings" },
+    { id: "p7", type: "medium", name: "Jam 7 - Condicionais Compostos" },
+    { id: "p8", type: "medium", name: "Jam 8 - Operações Matemáticas" },
+    { id: "p9", type: "medium", name: "Jam 9 - Funções Utilitárias" },
+    { id: "p10", type: "medium", name: "Jam 10 - Busca Simples" },
+    { id: "p11", type: "medium", name: "Jam 11 - Ordenação & Filtros" },
+    { id: "p12", type: "medium", name: "Jam 12 - Validação de Formulário" },
+    { id: "p13", type: "medium", name: "Jam 13 - Consumo de JSON" },
+    { id: "p14", type: "medium", name: "Jam 14 - Armazenamento Local" },
+    { id: "p15", type: "medium", name: "Jam 15 - Eventos DOM Avançados" },
+    
+    { id: "p16", type: "hard", name: "Jam 16 - Recursão Complexa" },
+    { id: "p17", type: "hard", name: "Jam 17 - Estruturas de Dados Dinâmicas" },
+    { id: "p18", type: "hard", name: "Jam 18 - Algoritmo de Grafos" },
+    { id: "p19", type: "hard", name: "Jam 19 - Otimização de Performance" },
+    { id: "p20", type: "hard", name: "Jam 20 - Resolução de Promises Concorrentes" },
+    { id: "p21", type: "hard", name: "Jam 21 - Criptografia Simples" }
+  ];
+
+  let state = {
+    leaderboard: [],
+    currentSession: null,
+    jamsPool: [...DEFAULT_JAMS_POOL],
+    weakJams: [] // List of jam names that had difficulties
+  };
+
+  // State persistence
+  function loadState() {
+    const saved = localStorage.getItem('jamrun_state');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      state.leaderboard = parsed.leaderboard || [];
+      state.currentSession = parsed.currentSession || null;
+      state.jamsPool = parsed.jamsPool || [...DEFAULT_JAMS_POOL];
+      state.weakJams = parsed.weakJams || [];
+    }
+    updateRetrainHUD();
+  }
+
+  function saveState() {
+    localStorage.setItem('jamrun_state', JSON.stringify(state));
+    updateRetrainHUD();
+  }
+
+  function updateRetrainHUD() {
+    const countEl = document.getElementById('retrain-jams-count');
+    const boxEl = document.getElementById('retrain-status-box');
+    if (state.weakJams.length > 0) {
+      countEl.textContent = state.weakJams.length;
+      boxEl.style.display = 'flex';
+    } else {
+      boxEl.style.display = 'none';
+    }
+  }
+
+  // Active Session Timers
+  let sessionTimerInterval = null;
+  let jamTimerInterval = null;
+
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.app-panel').forEach(p => p.classList.remove('active'));
+    
+    const clickedTab = Array.from(document.querySelectorAll('.tab')).find(t => t.textContent.toLowerCase().includes(tabId));
+    if (clickedTab) clickedTab.classList.add('active');
+    
+    const targetPanel = document.getElementById(`panel-${tabId}`);
+    if (targetPanel) targetPanel.classList.add('active');
+
+    if (tabId === 'leaderboard') renderLeaderboard();
+    if (tabId === 'metricas') renderMyMetrics();
+    if (tabId === 'customizer') renderJamsPool();
+    if (tabId === 'competicao') updateRetrainHUD();
+  }
+
+  // Draw Jams dynamically based on ratio: 1 Easy, 9 Medium, 4 Hard
+  // Prioritizing weakJams if retrain mode is active.
+  function drawJams() {
+    const easyPool = state.jamsPool.filter(j => j.type === 'easy');
+    const mediumPool = state.jamsPool.filter(j => j.type === 'medium');
+    const hardPool = state.jamsPool.filter(j => j.type === 'hard');
+
+    if (easyPool.length < 1 || mediumPool.length < 9 || hardPool.length < 4) {
+      alert(`Erro: Você precisa de pelo menos 1 Easy, 9 Medium e 4 Hard cadastrados no catálogo para sortear.
+Atualmente você tem:
+🟢 Easy: ${easyPool.length}
+🟡 Medium: ${mediumPool.length}
+🔴 Hard: ${hardPool.length}`);
+      return null;
+    }
+
+    const useRetrain = document.getElementById('enable-retrain-mode').checked;
+    
+    const selectForDifficulty = (pool, count, type) => {
+      let selected = [];
+      
+      if (useRetrain && state.weakJams.length > 0) {
+        // Find weak jams that belong to this difficulty level and are in the active pool
+        const matchingWeak = pool.filter(j => state.weakJams.includes(j.name));
+        selected.push(...matchingWeak.slice(0, count));
+      }
+
+      // Fill remaining spots randomly
+      const remainingCount = count - selected.length;
+      if (remainingCount > 0) {
+        const remainingPool = pool.filter(j => !selected.some(s => s.id === j.id));
+        const shuffled = [...remainingPool].sort(() => 0.5 - Math.random());
+        selected.push(...shuffled.slice(0, remainingCount));
+      }
+
+      return selected;
+    };
+
+    const selectedEasy = selectForDifficulty(easyPool, 1, 'easy');
+    const selectedMedium = selectForDifficulty(mediumPool, 9, 'medium');
+    const selectedHard = selectForDifficulty(hardPool, 4, 'hard');
+
+    const drawn = [...selectedEasy, ...selectedMedium, ...selectedHard];
+
+    return drawn.map((jam, index) => ({
+      id: index + 1,
+      type: jam.type,
+      name: jam.name,
+      completed: false,
+      timeSpent: 0,
+      errors: 0,
+      hints: 0
+    }));
+  }
+
+  // Start a new 1-hour session
+  function startSession() {
+    const studentName = document.getElementById('student-name').value.trim();
+    if (!studentName) {
+      alert('Por favor, insira o nome do competidor para iniciar!');
+      return;
+    }
+
+    const selectedJams = drawJams();
+    if (!selectedJams) return;
+
+    state.currentSession = {
+      studentName: studentName,
+      timeRemaining: 3600, // 1 hour in seconds
+      completedCount: 0,
+      totalErrors: 0,
+      totalHints: 0,
+      jams: selectedJams,
+      activeJamId: null,
+      isJamRunning: false,
+      startTime: Date.now(),
+      hasAlerted10m: false
+    };
+
+    document.getElementById('setup-card').style.display = 'none';
+    document.getElementById('active-session-area').style.display = 'block';
+
+    renderJamsGrid();
+    startSessionTimer();
+    updateHUD();
+    saveState();
+
+    playAlertBeep(660, 0.2);
+  }
+
+  function startSessionTimer() {
+    if (sessionTimerInterval) clearInterval(sessionTimerInterval);
+    sessionTimerInterval = setInterval(() => {
+      if (!state.currentSession) return;
+      state.currentSession.timeRemaining--;
+
+      const time = state.currentSession.timeRemaining;
+
+      if (time <= 0) {
+        endSession(true);
+        return;
+      }
+
+      // Audio Alarm logic
+      if (time <= 600) {
+        if (!state.currentSession.hasAlerted10m) {
+          state.currentSession.hasAlerted10m = true;
+          playAlertBeep(520, 0.2, 'triangle');
+          setTimeout(() => playAlertBeep(520, 0.2, 'triangle'), 300);
+        }
+
+        if (time < 60) {
+          if (time <= 10) {
+            playAlertBeep(880, 0.08, 'sine');
+          } else if (time % 10 === 0) {
+            playAlertBeep(660, 0.15, 'sine');
+          }
+        } else if (time % 60 === 0) {
+          playAlertBeep(580, 0.3, 'triangle');
+        }
+      }
+
+      updateHUD();
+    }, 1000);
+  }
+
+  function updateHUD() {
+    if (!state.currentSession) return;
+    
+    const min = Math.floor(state.currentSession.timeRemaining / 60);
+    const sec = state.currentSession.timeRemaining % 60;
+    const display = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+    
+    const countEl = document.getElementById('session-countdown');
+    countEl.textContent = display;
+    
+    if (state.currentSession.timeRemaining <= 600) {
+      countEl.classList.add('critical');
+    } else {
+      countEl.classList.remove('critical');
+    }
+
+    document.getElementById('jams-done-count').textContent = state.currentSession.completedCount;
+    document.getElementById('session-hints-count').textContent = state.currentSession.totalHints;
+  }
+
+  function renderJamsGrid() {
+    const container = document.getElementById('jams-nodes-container');
+    container.innerHTML = '';
+
+    if (!state.currentSession) return;
+
+    state.currentSession.jams.forEach(jam => {
+      const node = document.createElement('div');
+      node.className = `jam-node ${jam.type} ${jam.completed ? 'completed' : ''} ${state.currentSession.activeJamId === jam.id ? 'active' : ''}`;
+      node.onclick = () => selectJam(jam.id);
+
+      node.innerHTML = `
+        <span class="num">${jam.id}</span>
+        <span class="diff ${jam.type}">${jam.type}</span>
+        <div class="status-dot"></div>
+      `;
+      container.appendChild(node);
+    });
+  }
+
+  function selectJam(jamId) {
+    if (!state.currentSession) return;
+    
+    const jam = state.currentSession.jams.find(j => j.id === jamId);
+    if (jam.completed) {
+      alert('Este Jam já foi concluído!');
+      return;
+    }
+
+    if (state.currentSession.activeJamId && state.currentSession.activeJamId !== jamId) {
+      pauseActiveJamTimer();
+    }
+
+    state.currentSession.activeJamId = jamId;
+    state.currentSession.isJamRunning = true;
+    
+    document.getElementById('active-jam-card').style.display = 'block';
+    document.getElementById('active-jam-name').textContent = jam.name;
+    
+    const badge = document.getElementById('active-jam-badge');
+    badge.className = `diff ${jam.type}`;
+    badge.textContent = jam.type;
+
+    document.getElementById('active-jam-errors').textContent = jam.errors;
+    document.getElementById('active-jam-hints').textContent = jam.hints;
+
+    renderJamsGrid();
+    startJamTimer(jamId);
+    saveState();
+  }
+
+  function startJamTimer(jamId) {
+    if (jamTimerInterval) clearInterval(jamTimerInterval);
+    
+    const jam = state.currentSession.jams.find(j => j.id === jamId);
+    updateJamTimerDisplay(jam.timeSpent);
+
+    jamTimerInterval = setInterval(() => {
+      if (!state.currentSession || !state.currentSession.isJamRunning) return;
+      jam.timeSpent++;
+      updateJamTimerDisplay(jam.timeSpent);
+    }, 1000);
+  }
+
+  function updateJamTimerDisplay(seconds) {
+    const min = Math.floor(seconds / 60);
+    const sec = seconds % 60;
+    document.getElementById('jam-timer-display').textContent = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+  }
+
+  function pauseActiveJamTimer() {
+    if (jamTimerInterval) clearInterval(jamTimerInterval);
+    if (state.currentSession) {
+      state.currentSession.isJamRunning = false;
+    }
+    const btn = document.getElementById('btn-pause-jam');
+    if (btn) btn.textContent = 'Retomar';
+  }
+
+  function pauseOrResumeJam() {
+    if (!state.currentSession || !state.currentSession.activeJamId) return;
+    
+    const btn = document.getElementById('btn-pause-jam');
+    if (state.currentSession.isJamRunning) {
+      pauseActiveJamTimer();
+      btn.textContent = 'Retomar';
+    } else {
+      state.currentSession.isJamRunning = true;
+      btn.textContent = 'Pausar';
+      startJamTimer(state.currentSession.activeJamId);
+    }
+  }
+
+  function incrementActiveError() {
+    if (!state.currentSession || !state.currentSession.activeJamId) return;
+    
+    const jam = state.currentSession.jams.find(j => j.id === state.currentSession.activeJamId);
+    jam.errors++;
+    state.currentSession.totalErrors++;
+    
+    document.getElementById('active-jam-errors').textContent = jam.errors;
+    playAlertBeep(220, 0.1, 'sawtooth');
+    saveState();
+  }
+
+  function useActiveHint() {
+    if (!state.currentSession || !state.currentSession.activeJamId) return;
+    
+    const jam = state.currentSession.jams.find(j => j.id === state.currentSession.activeJamId);
+    jam.hints++;
+    
+    // Add 1 minute penalty directly to timeSpent
+    jam.timeSpent += 60;
+    state.currentSession.totalHints++;
+    
+    document.getElementById('active-jam-hints').textContent = jam.hints;
+    updateJamTimerDisplay(jam.timeSpent);
+    
+    document.getElementById('session-hints-hud').textContent = state.currentSession.totalHints;
+
+    playAlertBeep(440, 0.25, 'triangle');
+    saveState();
+  }
+
+  function completeActiveJam() {
+    if (!state.currentSession || !state.currentSession.activeJamId) return;
+
+    if (jamTimerInterval) clearInterval(jamTimerInterval);
+    
+    const jam = state.currentSession.jams.find(j => j.id === state.currentSession.activeJamId);
+    jam.completed = true;
+    
+    state.currentSession.completedCount++;
+    state.currentSession.activeJamId = null;
+    state.currentSession.isJamRunning = false;
+
+    document.getElementById('active-jam-card').style.display = 'none';
+
+    renderJamsGrid();
+    updateHUD();
+
+    playAlertBeep(587.33, 0.15);
+
+    if (state.currentSession.completedCount === 14) {
+      endSession(false);
+    } else {
+      saveState();
+    }
+  }
+
+  function abandonSession() {
+    if (!confirm('Deseja realmente abandonar esta competição? Seu progresso atual será perdido.')) return;
+    
+    if (sessionTimerInterval) clearInterval(sessionTimerInterval);
+    if (jamTimerInterval) clearInterval(jamTimerInterval);
+
+    state.currentSession = null;
+    document.getElementById('setup-card').style.display = 'block';
+    document.getElementById('active-session-area').style.display = 'none';
+    saveState();
+  }
+
+  // End Session
+  function endSession(isTimeout) {
+    if (sessionTimerInterval) clearInterval(sessionTimerInterval);
+    if (jamTimerInterval) clearInterval(jamTimerInterval);
+
+    const session = state.currentSession;
+    if (!session) return;
+
+    const timeSpentTotal = 3600 - session.timeRemaining;
+    const finalStatus = isTimeout ? 'DNF (Tempo Excedeu)' : 'Completou';
+
+    const newRecord = {
+      studentName: session.studentName,
+      completedCount: session.completedCount,
+      totalTime: timeSpentTotal,
+      totalErrors: session.totalErrors,
+      totalHints: session.totalHints,
+      status: finalStatus,
+      date: new Date().toLocaleString(),
+      jams: session.jams
+    };
+
+    // --- SPACED REPETITION / WEAK POINT TRACKING ---
+    // Identify difficult Jams:
+    // Any Jam where hints > 0, errors > 0, or time taken is slow:
+    // (Easy > 90s, Medium > 210s, Hard > 420s)
+    session.jams.forEach(jam => {
+      const isSlow = (jam.type === 'hard' && jam.timeSpent > 420) || 
+                     (jam.type === 'medium' && jam.timeSpent > 210) || 
+                     (jam.type === 'easy' && jam.timeSpent > 90);
+      
+      const hadDifficulty = jam.hints > 0 || jam.errors > 0 || isSlow || !jam.completed;
+      
+      if (hadDifficulty) {
+        if (!state.weakJams.includes(jam.name)) {
+          state.weakJams.push(jam.name);
+        }
+      } else {
+        // If they did it perfectly (no hints, no errors, fast), remove it from weakJams list!
+        state.weakJams = state.weakJams.filter(name => name !== jam.name);
+      }
+    });
+
+    state.leaderboard.push(newRecord);
+    
+    // Sort Leaderboard
+    state.leaderboard.sort((a, b) => {
+      if (b.completedCount !== a.completedCount) return b.completedCount - a.completedCount;
+      if (a.totalHints !== b.totalHints) return a.totalHints - b.totalHints;
+      if (a.totalTime !== b.totalTime) return a.totalTime - b.totalTime;
+      return a.totalErrors - b.totalErrors;
+    });
+
+    localStorage.setItem('jamrun_last_run', JSON.stringify(newRecord));
+
+    state.currentSession = null;
+    saveState();
+
+    // Setup success UI modal
+    const titleEl = document.getElementById('modal-title');
+    const textEl = document.getElementById('modal-text');
+
+    if (isTimeout) {
+      titleEl.textContent = '⏰ Tempo Excedido!';
+      titleEl.style.color = 'var(--hard)';
+      textEl.textContent = `O tempo de 1 hora acabou! Você conseguiu concluir ${newRecord.completedCount} de 14 Jams, usando ${newRecord.totalHints} dicas e cometendo ${newRecord.totalErrors} erros.`;
+      playAlertBeep(180, 0.6, 'sawtooth');
+    } else {
+      titleEl.textContent = '🏆 Excelente Corrida!';
+      titleEl.style.color = 'var(--easy)';
+      textEl.textContent = `Parabéns! Você completou os 14 Jams em ${formatDuration(newRecord.totalTime)} usando ${newRecord.totalHints} dica(s) com ${newRecord.totalErrors} erro(s).`;
+      playAlertBeep(523.25, 0.15);
+      setTimeout(() => playAlertBeep(659.25, 0.15), 150);
+      setTimeout(() => playAlertBeep(783.99, 0.3), 300);
+    }
+
+    document.getElementById('completion-modal').classList.add('active');
+
+    document.getElementById('setup-card').style.display = 'block';
+    document.getElementById('active-session-area').style.display = 'none';
+  }
+
+  function closeModal() {
+    document.getElementById('completion-modal').classList.remove('active');
+    switchTab('leaderboard');
+  }
+
+  function formatDuration(seconds) {
+    const min = Math.floor(seconds / 60);
+    const sec = seconds % 60;
+    return `${min}m ${sec}s`;
+  }
+
+  // Populate leaderboard with mock competitors
+  function seedCompetitors() {
+    const mockCompetitors = [
+      {
+        studentName: 'Ana Silva (Pro)',
+        completedCount: 14,
+        totalTime: 1845,
+        totalErrors: 2,
+        totalHints: 0,
+        status: 'Completou',
+        date: new Date().toLocaleString(),
+        jams: []
+      },
+      {
+        studentName: 'Rodrigo Costa',
+        completedCount: 14,
+        totalTime: 2310,
+        totalErrors: 5,
+        totalHints: 1,
+        status: 'Completou',
+        date: new Date().toLocaleString(),
+        jams: []
+      },
+      {
+        studentName: 'Lucas Lima',
+        completedCount: 12,
+        totalTime: 3600,
+        totalErrors: 8,
+        totalHints: 4,
+        status: 'DNF (Tempo Excedeu)',
+        date: new Date().toLocaleString(),
+        jams: []
+      },
+      {
+        studentName: 'Mariana Santos',
+        completedCount: 14,
+        totalTime: 2980,
+        totalErrors: 1,
+        totalHints: 0,
+        status: 'Completou',
+        date: new Date().toLocaleString(),
+        jams: []
+      }
+    ];
+
+    state.leaderboard.push(...mockCompetitors);
+    state.leaderboard.sort((a, b) => {
+      if (b.completedCount !== a.completedCount) return b.completedCount - a.completedCount;
+      if (a.totalHints !== b.totalHints) return a.totalHints - b.totalHints;
+      if (a.totalTime !== b.totalTime) return a.totalTime - b.totalTime;
+      return a.totalErrors - b.totalErrors;
+    });
+
+    saveState();
+    renderLeaderboard();
+  }
+
+  function renderLeaderboard() {
+    const tbody = document.getElementById('leaderboard-body');
+    tbody.innerHTML = '';
+
+    if (state.leaderboard.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">Nenhum competidor registrado ainda. Comece a correr!</td></tr>`;
+      return;
+    }
+
+    state.leaderboard.forEach((run, index) => {
+      const row = document.createElement('tr');
+      
+      let medalClass = '';
+      if (index === 0) medalClass = 'gold';
+      else if (index === 1) medalClass = 'silver';
+      else if (index === 2) medalClass = 'bronze';
+
+      const isCompleted = run.completedCount === 14;
+
+      row.innerHTML = `
+        <td class="rank-num ${medalClass}">#${index + 1}</td>
+        <td><strong>${run.studentName}</strong></td>
+        <td>${run.completedCount}/14</td>
+        <td><strong style="color: var(--medium);">${run.totalHints}</strong></td>
+        <td>${formatDuration(run.totalTime)}</td>
+        <td>${run.totalErrors}</td>
+        <td><span class="diff ${isCompleted ? 'easy' : 'hard'}">${run.status}</span></td>
+      `;
+      tbody.appendChild(row);
+    });
+
+    // Populate quick dashboard preview
+    const quickList = document.getElementById('quick-leaderboard');
+    if (quickList) {
+      quickList.innerHTML = '';
+      state.leaderboard.slice(0, 5).forEach((run, index) => {
+        const item = document.createElement('div');
+        item.style.display = 'flex';
+        item.style.justifyContent = 'space-between';
+        item.style.padding = '8px 0';
+        item.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+        
+        item.innerHTML = `
+          <span>#${index+1} <strong>${run.studentName}</strong></span>
+          <span style="color: var(--text-muted);">${run.completedCount} Jams · ${run.totalHints}💡 · ${formatDuration(run.totalTime)}</span>
+        `;
+        quickList.appendChild(item);
+      });
+    }
+  }
+
+  function renderMyMetrics() {
+    const lastRunJson = localStorage.getItem('jamrun_last_run');
+    if (!lastRunJson) {
+      document.getElementById('metric-total-time').textContent = '—';
+      document.getElementById('metric-total-hints').textContent = '—';
+      document.getElementById('metric-total-errors').textContent = '—';
+      document.getElementById('study-recommendation').style.display = 'none';
+      document.getElementById('metrics-chart-container').innerHTML = `
+        <div style="text-align: center; padding: 40px 20px; color: var(--text-muted);">
+          Complete pelo menos uma sessão de corrida para habilitar os gráficos e recomendações de estudo.
+        </div>
+      `;
+      return;
+    }
+
+    const run = JSON.parse(lastRunJson);
+
+    document.getElementById('metric-total-time').textContent = formatDuration(run.totalTime);
+    document.getElementById('metric-total-hints').textContent = `${run.totalHints} dica(s)`;
+    document.getElementById('metric-total-errors').textContent = `${run.totalErrors} erro(s)`;
+
+    // Calculate dynamic Study Plan recommendations
+    const studyPlanEl = document.getElementById('study-recommendation');
+    const studyTextEl = document.getElementById('study-recommendation-text');
+    
+    let recommendationHTML = "";
+    
+    // Check which Jams are currently saved as Weak Jams
+    if (state.weakJams.length > 0) {
+      recommendationHTML += `⚠️ <strong>Jams marcados para Retreino (${state.weakJams.length}):</strong><br>`;
+      recommendationHTML += `<ul style="margin-left: 20px; margin-top: 5px; margin-bottom: 15px;">`;
+      state.weakJams.forEach(name => {
+        recommendationHTML += `<li>${name}</li>`;
+      });
+      recommendationHTML += `</ul>`;
+      recommendationHTML += `Esses Jams serão colocados automaticamente na próxima rodada para que você possa praticá-los até resolvê-los com velocidade máxima e zero erros/dicas.`;
+    } else {
+      recommendationHTML = `🔥 <strong>Excelente Desempenho!</strong> Você superou todos os pontos fracos. Continue praticando para manter o ritmo perfeito!`;
+    }
+
+    studyTextEl.innerHTML = recommendationHTML;
+    studyPlanEl.style.display = 'block';
+
+    const times = run.jams.map(j => j.timeSpent);
+    const maxTime = Math.max(...times, 1);
+
+    const chartContainer = document.getElementById('metrics-chart-container');
+    chartContainer.innerHTML = '';
+
+    run.jams.forEach(jam => {
+      const row = document.createElement('div');
+      row.className = 'chart-bar-row';
+
+      const pct = (jam.timeSpent / maxTime) * 100;
+      
+      let diffColor = 'var(--easy)';
+      if (jam.type === 'medium') diffColor = 'var(--medium)';
+      if (jam.type === 'hard') diffColor = 'var(--hard)';
+
+      let errorDots = '';
+      for (let i = 0; i < jam.errors; i++) {
+        errorDots += `<div class="error-dot"></div>`;
+      }
+
+      let hintDots = '';
+      for (let i = 0; i < jam.hints; i++) {
+        hintDots += `<div class="hint-dot" title="Dica Usada"></div>`;
+      }
+
+      row.innerHTML = `
+        <div class="chart-label" title="${jam.name}">${jam.name}</div>
+        <div class="chart-bar-wrapper">
+          <div class="chart-bar-fill" style="width: ${jam.completed ? Math.max(pct, 8) : 0}%; background: ${diffColor};">
+            <span class="chart-bar-val">${jam.completed ? formatDuration(jam.timeSpent) : 'Não Resolvido'}</span>
+          </div>
+        </div>
+        <div class="chart-error-dots">${hintDots}${errorDots}</div>
+      `;
+      chartContainer.appendChild(row);
+    });
+  }
+
+  // JAMS POOL CUSTOMIZER ACTIONS
+  function renderJamsPool() {
+    const listContainer = document.getElementById('jams-pool-list-container');
+    listContainer.innerHTML = '';
+
+    document.getElementById('total-pool-count').textContent = state.jamsPool.length;
+    document.getElementById('pool-easy-count').textContent = state.jamsPool.filter(j => j.type === 'easy').length;
+    document.getElementById('pool-medium-count').textContent = state.jamsPool.filter(j => j.type === 'medium').length;
+    document.getElementById('pool-hard-count').textContent = state.jamsPool.filter(j => j.type === 'hard').length;
+
+    state.jamsPool.forEach(jam => {
+      const item = document.createElement('div');
+      item.className = 'pool-list-item';
+
+      let diffColor = 'var(--easy)';
+      if (jam.type === 'medium') diffColor = 'var(--medium)';
+      if (jam.type === 'hard') diffColor = 'var(--hard)';
+
+      item.innerHTML = `
+        <div>
+          <span class="badge-diff" style="background: rgba(255,255,255,0.05); color: ${diffColor}; border: 1px solid ${diffColor}44;">${jam.type}</span>
+          <strong style="margin-left: 10px;">${jam.name}</strong>
+        </div>
+        <button class="btn btn-red" onclick="deleteJamFromPool('${jam.id}')" style="width: auto; padding: 4px 10px; font-size: 0.8rem;">Excluir</button>
+      `;
+      listContainer.appendChild(item);
+    });
+  }
+
+  function addCustomJam() {
+    const name = document.getElementById('new-jam-name').value.trim();
+    const type = document.getElementById('new-jam-type').value;
+
+    if (!name) {
+      alert("Por favor, digite o nome do Jam.");
+      return;
+    }
+
+    const newJam = {
+      id: "pool_" + Date.now() + "_" + Math.random().toString(36).substr(2, 4),
+      type: type,
+      name: name
+    };
+
+    state.jamsPool.push(newJam);
+    saveState();
+    renderJamsPool();
+
+    document.getElementById('new-jam-name').value = '';
+    playAlertBeep(523.25, 0.1);
+  }
+
+  function deleteJamFromPool(id) {
+    if (!confirm("Tem certeza que quer remover este Jam do catálogo?")) return;
+    state.jamsPool = state.jamsPool.filter(j => j.id !== id);
+    saveState();
+    renderJamsPool();
+  }
+
+  function resetJamPoolToDefault() {
+    if (!confirm("Isso irá redefinir seu catálogo para os Jams padrão. Continuar?")) return;
+    state.jamsPool = [...DEFAULT_JAMS_POOL];
+    saveState();
+    renderJamsPool();
+  }
+
+  // Load storage state on boot
+  loadState();
+  renderLeaderboard();
+</script>
+</body>
+</html>

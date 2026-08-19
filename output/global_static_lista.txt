@@ -1,0 +1,300 @@
+================================================================================
+GLOBAL_STATIC_ANSWER - LISTA DAS TASKS
+================================================================================
+TOTAL: 73
+
+[01] DEVOPS1
+     TASK: 1
+     TÍTULO: SEM TÍTULO
+
+[02] Keep-your-Taxbot-in-check
+     TASK: 2
+     TÍTULO: SEM TÍTULO
+
+[03] alb-ec-2-failover
+     TASK: 2
+     TÍTULO: SEM TÍTULO
+
+[04] audit-your-rds
+     TASK: 2
+     TÍTULO: SEM TÍTULO
+
+[05] automate-ml-with-sm-pipelines
+     TASK: 1
+     TÍTULO: SEM TÍTULO
+
+[06] automate-ml-with-sm-pipelines
+     TASK: 2
+     TÍTULO: SEM TÍTULO
+
+[07] automate-ml-with-sm-pipelines
+     TASK: 3
+     TÍTULO: SEM TÍTULO
+
+[08] chatbot-challenge-riv
+     TASK: 2
+     TÍTULO: SEM TÍTULO
+
+[09] data-discovery-guardian-angel
+     TASK: 1
+     TÍTULO: SEM TÍTULO
+
+[10] data-discovery-guardian-angel
+     TASK: 4
+     TÍTULO: SEM TÍTULO
+
+[11] devops-msg-filter
+     TASK: 1
+     TÍTULO: SEM TÍTULO
+
+[12] devops-msg-filter
+     TASK: 2
+     TÍTULO: SEM TÍTULO
+
+[13] ec-2-security-group-ingress
+     TASK: 1
+     TÍTULO: SEM TÍTULO
+
+[14] explain-patient-prioritization
+     TASK: 1
+     TÍTULO: SEM TÍTULO
+
+[15] explain-patient-prioritization
+     TASK: 2
+     TÍTULO: SEM TÍTULO
+
+[16] explain-patient-prioritization
+     TASK: 3
+     TÍTULO: SEM TÍTULO
+
+[17] explain-patient-prioritization
+     TASK: 4
+     TÍTULO: SEM TÍTULO
+
+[18] explain-patient-prioritization
+     TASK: 5
+     TÍTULO: SEM TÍTULO
+
+[19] fix-my-research
+     TASK: 3
+     TÍTULO: SEM TÍTULO
+
+[20] foundational-devops
+     TASK: 1
+     TÍTULO: SEM TÍTULO
+
+[21] foundational-devops
+     TASK: 2
+     TÍTULO: SEM TÍTULO
+
+[22] foundational-security
+     TASK: 1
+     TÍTULO: SEM TÍTULO
+
+[23] foundational-security
+     TASK: 2
+     TÍTULO: SEM TÍTULO
+
+[24] games-simple-query
+     TASK: 1
+     TÍTULO: SEM TÍTULO
+
+[25] games-simple-query
+     TASK: 2
+     TÍTULO: SEM TÍTULO
+
+[26] games-simple-query
+     TASK: 3
+     TÍTULO: SEM TÍTULO
+
+[27] games-simple-query
+     TASK: 4
+     TÍTULO: SEM TÍTULO
+
+[28] gen-ai-compliance-report
+     TASK: 1
+     TÍTULO: SEM TÍTULO
+
+[29] gityourcryptoright
+     TASK: 1
+     TÍTULO: SEM TÍTULO
+
+[30] gityourcryptoright
+     TASK: 2
+     TÍTULO: SEM TÍTULO
+
+[31] gityourcryptoright
+     TASK: 3
+     TÍTULO: SEM TÍTULO
+
+[32] gityourcryptoright
+     TASK: 4
+     TÍTULO: SEM TÍTULO
+
+[33] gityourcryptoright
+     TASK: 5
+     TÍTULO: SEM TÍTULO
+
+[34] help-me-find-customer-data
+     TASK: 3
+     TÍTULO: SEM TÍTULO
+
+[35] iam-delegated-admin
+     TASK: 1
+     TÍTULO: SEM TÍTULO
+
+[36] intelligent-content-transform
+     TASK: 6
+     TÍTULO: SEM TÍTULO
+
+[37] intro-to-map-reduce
+     TASK: 2
+     TÍTULO: SEM TÍTULO
+
+[38] intro-to-map-reduce
+     TASK: 3
+     TÍTULO: SEM TÍTULO
+
+[39] intro-to-map-reduce
+     TASK: 4
+     TÍTULO: SEM TÍTULO
+
+[40] intro-to-map-reduce
+     TASK: 5
+     TÍTULO: SEM TÍTULO
+
+[41] live-streaming-with-aws
+     TASK: 1
+     TÍTULO: SEM TÍTULO
+
+[42] live-streaming-with-aws
+     TASK: 3
+     TÍTULO: SEM TÍTULO
+
+[43] live-streaming-with-aws
+     TASK: 5
+     TÍTULO: SEM TÍTULO
+
+[44] looking-in-the-mirror
+     TASK: 1
+     TÍTULO: SEM TÍTULO
+
+[45] malware-in-your-bucket
+     TASK: 1
+     TÍTULO: SEM TÍTULO
+
+[46] media-streaming-1
+     TASK: 1
+     TÍTULO: SEM TÍTULO
+
+[47] modernize-asp
+     TASK: 2
+     TÍTULO: SEM TÍTULO
+
+[48] modernize-asp
+     TASK: 3
+     TÍTULO: SEM TÍTULO
+
+[49] movedbmanaged
+     TASK: 2
+     TÍTULO: SEM TÍTULO
+
+[50] network-analyzer-segregation
+     TASK: 1
+     TÍTULO: SEM TÍTULO
+
+[51] only-that-parrot-can-escape
+     TASK: 3
+     TÍTULO: SEM TÍTULO
+
+[52] public-private-vpcs
+     TASK: 1
+     TÍTULO: SEM TÍTULO
+
+[53] redshift-intro-games-jam
+     TASK: 2
+     TÍTULO: SEM TÍTULO
+
+[54] redshift-intro-games-jam
+     TASK: 3
+     TÍTULO: SEM TÍTULO
+
+[55] respond-ec-2-compromise
+     TASK: 1
+     TÍTULO: SEM TÍTULO
+
+[56] respond-ec-2-compromise
+     TASK: 2
+     TÍTULO: SEM TÍTULO
+
+[57] respond-ec-2-compromise
+     TASK: 3
+     TÍTULO: SEM TÍTULO
+
+[58] respond-ec-2-compromise
+     TASK: 4
+     TÍTULO: SEM TÍTULO
+
+[59] respond-ec-2-compromise
+     TASK: 5
+     TÍTULO: SEM TÍTULO
+
+[60] respond-ec-2-compromise
+     TASK: 6
+     TÍTULO: SEM TÍTULO
+
+[61] retail_analytics_quicksight
+     TASK: 2
+     TÍTULO: SEM TÍTULO
+
+[62] s-3-access-points
+     TASK: 1
+     TÍTULO: SEM TÍTULO
+
+[63] s3-mountpoint
+     TASK: 2
+     TÍTULO: SEM TÍTULO
+
+[64] s3-mountpoint
+     TASK: 4
+     TÍTULO: SEM TÍTULO
+
+[65] sagemaker-binary-classifier
+     TASK: 1
+     TÍTULO: SEM TÍTULO
+
+[66] sagemaker-binary-classifier
+     TASK: 2
+     TÍTULO: SEM TÍTULO
+
+[67] strands-agents-golden-pipeline
+     TASK: 1
+     TÍTULO: SEM TÍTULO
+
+[68] tag-youre-it
+     TASK: 1
+     TÍTULO: SEM TÍTULO
+
+[69] the-car-genie
+     TASK: 2
+     TÍTULO: SEM TÍTULO
+
+[70] this-instructor-is-in-danger
+     TASK: 2
+     TÍTULO: SEM TÍTULO
+
+[71] webpage-styling-broken
+     TASK: 1
+     TÍTULO: SEM TÍTULO
+
+[72] wordpress-breach-quest
+     TASK: 3
+     TÍTULO: SEM TÍTULO
+
+[73] xray-serverless
+     TASK: 1
+     TÍTULO: SEM TÍTULO
+
+================================================================================
+LISTAGEM FINALIZADA
+================================================================================

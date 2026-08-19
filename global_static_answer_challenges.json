@@ -1,0 +1,757 @@
+
+[
+  {
+    "challengeId": "agentcore-memory-isolation",
+    "path": "latest.props.tasks[0]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "d3f30cae-d9a6-476a-8d29-7252419e4c63",
+      "taskNumber": 1,
+      "scorePercent": 20,
+      "title": "The Breach",
+      "content": "## Background\n\nPatients chat with the assistant about their medications and schedules and the assistant app **remembers** everything for their next visit. That memory is powered by **Amazon Bedrock AgentCore Memory**.\n\nBut during a compliance check, a tester logged in as one patient and saw **another patient's medical records**. That's a serious privacy breach and you've been brought in to fix it.\n\nIn this first task, you'll learn what AgentCore Memory is and then see the data leak for yourself. No fixing yet, just understanding the problem.\n\n## What is AgentCore Memory?\n\nAgentCore Memory lets an AI agent remember things across conversations. In simple terms:\n\n- When a patient says something, the agent **saves** it (a memory \"event\").\n- Later, the agent can **recall** what was said and use it to answer questions.\n\nSimple ideas you'll need:\n\n`actorId` - Unique ID to identify a patient (e.g. `patient-A`)\n\n`sessionId` - A single conversation with the assistant\n\nThat's all you need to know for now. You'll dig deeper in the next task.\n\n## Your Task\n\nThis is a **discovery task**. Your only goal is to see the bug in action: confirm that one patient can read another patient's medical data. Once you've witnessed the leak, you're ready to start fixing it in Task 2.\n\n**In this demo, we are using AWS Lambda as our agent, running with a strands framework. We will directly invoke the Lambda function to send queries, think of it as having a conversation with the agent. When you send a message, the agent processes it and eventually stores that information in memory for future recall**.\n\nIn a real production environment, you would have a UI and chatbot that integrates with the backend, but for the purpose of this challenge, we interact with the agent directly through Lambda's 'Test' tab.\n\n## Services You Should Use\n\n- AWS Lambda\n- Amazon Bedrock AgentCore Memory\n\n## Inventory\n\n- `PatientAssistantAgent` - the Lambda function that runs the assistant. You'll send it test messages.\n- `PatientAssistantMemory` - the AgentCore Memory resource where patient data is stored.\n\n## Getting Started\n\n**Step 1** - Store data as Patient A\n\nOpen the **AWS Lambda** console and select the `PatientAssistantAgent` function. Go to the **Test** tab and send this message as **Patient A**:\n   ```json\n   {\"prompt\": \"I take metformin and lisinopril\", \"actorId\": \"patient-A\", \"sessionId\": \"s1\"}\n   ```\nCheck the response. The assistant should acknowledge the information.\n\n**Note- Wait for 2 to 3 minutes to process and store Patient A's information.**\n\n**Step 2** - Now send a message as a *different* patient, for example as **Patient B**.\n   ```json    \n   {\"prompt\": \"What medications am I taking?\", \"actorId\": \"patient-B\", \"sessionId\": \"s2\"}\n   ```\nLook at the response carefully. Pay attention to what information the assistant returns and ask yourself: should Patient B have access to this?\n\nDid you spot the problem?\n\nYou are spot on. **Patient B** just received **Patient A's** medications, you've just witnessed the breach. Patient B never shared that information yet the assistant handed it over.In a real healthcare system, this would be a major HIPAA violation.\n\n## What You Learned\n\n- AgentCore Memory lets an agent **store** and **recall** information.\n- Every patient is identified by an `actorId`.\n- Right now, patients can read each other's data. Something is wrong with how the assistant isolates memory.\n\n\n## Task Validation\n\nThis task will be validated once you input the first medicine name Patient A takes. \n",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "python3.12",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "agentcore-memory-isolation",
+    "path": "latestApproved.props.tasks[0]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "d3f30cae-d9a6-476a-8d29-7252419e4c63",
+      "taskNumber": 1,
+      "scorePercent": 20,
+      "title": "The Breach",
+      "content": "## Background\n\nPatients chat with the assistant about their medications and schedules and the assistant app **remembers** everything for their next visit. That memory is powered by **Amazon Bedrock AgentCore Memory**.\n\nBut during a compliance check, a tester logged in as one patient and saw **another patient's medical records**. That's a serious privacy breach and you've been brought in to fix it.\n\nIn this first task, you'll learn what AgentCore Memory is and then see the data leak for yourself. No fixing yet, just understanding the problem.\n\n## What is AgentCore Memory?\n\nAgentCore Memory lets an AI agent remember things across conversations. In simple terms:\n\n- When a patient says something, the agent **saves** it (a memory \"event\").\n- Later, the agent can **recall** what was said and use it to answer questions.\n\nSimple ideas you'll need:\n\n`actorId` - Unique ID to identify a patient (e.g. `patient-A`)\n\n`sessionId` - A single conversation with the assistant\n\nThat's all you need to know for now. You'll dig deeper in the next task.\n\n## Your Task\n\nThis is a **discovery task**. Your only goal is to see the bug in action: confirm that one patient can read another patient's medical data. Once you've witnessed the leak, you're ready to start fixing it in Task 2.\n\n**In this demo, we are using AWS Lambda as our agent, running with a strands framework. We will directly invoke the Lambda function to send queries, think of it as having a conversation with the agent. When you send a message, the agent processes it and eventually stores that information in memory for future recall**.\n\nIn a real production environment, you would have a UI and chatbot that integrates with the backend, but for the purpose of this challenge, we interact with the agent directly through Lambda's 'Test' tab.\n\n## Services You Should Use\n\n- AWS Lambda\n- Amazon Bedrock AgentCore Memory\n\n## Inventory\n\n- `PatientAssistantAgent` - the Lambda function that runs the assistant. You'll send it test messages.\n- `PatientAssistantMemory` - the AgentCore Memory resource where patient data is stored.\n\n## Getting Started\n\n**Step 1** - Store data as Patient A\n\nOpen the **AWS Lambda** console and select the `PatientAssistantAgent` function. Go to the **Test** tab and send this message as **Patient A**:\n   ```json\n   {\"prompt\": \"I take metformin and lisinopril\", \"actorId\": \"patient-A\", \"sessionId\": \"s1\"}\n   ```\nCheck the response. The assistant should acknowledge the information.\n\n**Note- Wait for 2 to 3 minutes to process and store Patient A's information.**\n\n**Step 2** - Now send a message as a *different* patient, for example as **Patient B**.\n   ```json    \n   {\"prompt\": \"What medications am I taking?\", \"actorId\": \"patient-B\", \"sessionId\": \"s2\"}\n   ```\nLook at the response carefully. Pay attention to what information the assistant returns and ask yourself: should Patient B have access to this?\n\nDid you spot the problem?\n\nYou are spot on. **Patient B** just received **Patient A's** medications, you've just witnessed the breach. Patient B never shared that information yet the assistant handed it over.In a real healthcare system, this would be a major HIPAA violation.\n\n## What You Learned\n\n- AgentCore Memory lets an agent **store** and **recall** information.\n- Every patient is identified by an `actorId`.\n- Right now, patients can read each other's data. Something is wrong with how the assistant isolates memory.\n\n\n## Task Validation\n\nThis task will be validated once you input the first medicine name Patient A takes. \n",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "python3.12",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "alb-ec-2-failover",
+    "path": "latest.props.tasks[1]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "83a9db7f-b64f-4f88-bae5-199b0348426d",
+      "taskNumber": 2,
+      "scorePercent": 40,
+      "dependsOnTaskIds": [
+        "96e0c04e-b68e-4754-b62b-7f55112468ab"
+      ],
+      "title": "Modify the load balancing algorithm to access both the ec2 instances via the Application Load Balancer",
+      "content": "### Background\nNow high availability has been delivered, John has realised the current configuration returns the same ec2 instance when a request is sent to the Application Load Balancer. \n\n### Your Task\nMake a change to configuration to allow traffic to be routed to both ec2 Instances.\n\n### Getting Started\nOpen the DNS name of the Application Load Balancer in a web browser. What happens when you refresh the browser window several times? What Application Load Balancer or Target group configuration could cause this to happen?\n\n### Inventory\nThe following have already been provisioned in the environment;\n* An Application Load Balancer\n* Listener\n* Target Group\n* Two ec2 instances; these contain the web application.\n\n### Services You Should Use\n* Application Load Balancer\n* Target Group\n\n### Task Validation\nOpen your web browser. Navigate to the DNS of the load balancer. Refresh the browser a few times. You should see information from both EC2 instances in the target group displayed alternately. Copy the Key1 and Key2 values displayed on the webpages. Paste these values into the answer text box at the top of the challenge page. Note: Do not put a space between the key values. They should be pasted in the format Key1Key2.",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "nodejs14.x",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "alb-ec-2-failover",
+    "path": "latestApproved.props.tasks[1]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "83a9db7f-b64f-4f88-bae5-199b0348426d",
+      "taskNumber": 2,
+      "scorePercent": 40,
+      "dependsOnTaskIds": [
+        "96e0c04e-b68e-4754-b62b-7f55112468ab"
+      ],
+      "title": "Modify the load balancing algorithm to access both the ec2 instances via the Application Load Balancer",
+      "content": "### Background\nNow high availability has been delivered, John has realised the current configuration returns the same ec2 instance when a request is sent to the Application Load Balancer. \n\n### Your Task\nMake a change to configuration to allow traffic to be routed to both ec2 Instances.\n\n### Getting Started\nOpen the DNS name of the Application Load Balancer in a web browser. What happens when you refresh the browser window several times? What Application Load Balancer or Target group configuration could cause this to happen?\n\n### Inventory\nThe following have already been provisioned in the environment;\n* An Application Load Balancer\n* Listener\n* Target Group\n* Two ec2 instances; these contain the web application.\n\n### Services You Should Use\n* Application Load Balancer\n* Target Group\n\n### Task Validation\nOpen your web browser. Navigate to the DNS of the load balancer. Refresh the browser a few times. You should see information from both EC2 instances in the target group displayed alternately. Copy the Key1 and Key2 values displayed on the webpages. Paste these values into the answer text box at the top of the challenge page. Note: Do not put a space between the key values. They should be pasted in the format Key1Key2.",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "nodejs14.x",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "chatbot-challenge-riv",
+    "path": "latest.props.tasks[1]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "aaa2fee4-b5ce-463a-99ce-23c93f7ee7d8",
+      "taskNumber": 2,
+      "scorePercent": 50,
+      "dependsOnTaskIds": [
+        "2ddba252-7cbd-468a-9e51-a81128942c60"
+      ],
+      "title": "Storing Retail Order History in DynamoDB",
+      "content": "### Background:\n\nWonderful job! Your witty and funny responses have everyone smiling and orders are getting delivered on time!\n\nWhile doing your weekly reviews, you realized a new highly scalable solution is needed to store the order information for your application! You do your research and find a scalable NoSQL solution using Amazon DynamoDB. You will be testing the return item workflow where you'll be asking the retail order management chatbot for a replacement item!\n\n### Your Task:\n\n1. Create a DynamoDB table named \"RetailOrderInventory\" with the following attributes:\n   - customer_id (partition key)\n   - record_type_id (sort key)\n\n2. Locate the \"RetailOrderInventory\" table you created earlier.\n\n3. Click on the table name to open the table details.\n\n4. Using the console, create an item and choose to enter \"JSON\" view.\n\n7. In the JSON view, paste the following dummy customer data:\n\n*  Insert the following data for a customer:\n \n  {\"customer_id\": {\n    \"S\": \"9000004\"\n  },\n  \"record_type_id\": {\n    \"S\": \"O3\"\n  },\n  \"email\": {\n    \"S\": \"jane@gmail.com\"\n  },\n  \"location\": {\n    \"S\": \"1234 main street\"\n  },\n  \"order_status\": {\n    \"M\": {\n      \"delivered_date\": {\n        \"S\": \"12/20/2024\"\n      },\n      \"estimated_date\": {\n        \"S\": \"11/14/2024\"\n      },\n      \"order_number\": {\n        \"S\": \"1234561234561\"\n      },\n      \"status\": {\n        \"S\": \"delivered\"\n      }\n    }\n  },\n  \"record_type\": {\n    \"S\": \"customer_order\"\n  },\n  \"tracking_status\": {\n    \"M\": {\n      \"delivered_date\": {\n        \"S\": \"12/16/2024\"\n      },\n      \"estimated_date\": {\n        \"S\": \"12/16/2024\"\n      },\n      \"status\": {\n        \"S\": \"dispatched\"\n      },\n      \"tracking_number\": {\n        \"S\": \"123456789013\"\n      }\n    }\n  },\n  \"zip_code\": {\n    \"S\": \"67890\"\n  }\n}\n\n8. In the DynamoDBImportFunction within AWS Lambda, add code to interact with the new DynamoDB table and store the order history. \nInsert &lt;code&gt;import os &lt;/code&gt; at line 3. Insert &lt;code&gt;orderdb = os.environ['dynamodb_tablename']&lt;/code&gt; at line 13 and replace line 14 with &lt;code&gt;\n    table = dynamodb.Table(orderdb) &lt;/code&gt;\n9. You'll have to identify how to provide dynamodb_tablename as a variable to the Lambda function.\n\n10. Navigate back to the Lex chatbot and ask to 'return an item' and find replacement for order id for the customer and providing the zip code when asked. When asked to pick up or drop off, choose drop off and complete the task by entering the name of the store that the chatbot recommends!  \n\n11. Enter 'not needed' when asked for the reason to return and ask for a replacement. Enter the zip code and choose to drop off at the location.\n\n### Getting Started:\n\n1. Create the DynamoDB table:\n\n * Use the AWS Management Console to create a new DynamoDB table named \"RetailOrderInventory\" with the following attributes:\ncustomer_id (partition key)\nrecord_type_id (sort key)\n\n2. Insert the sample data:\n\n * Use the AWS Console to insert the provided JSON data for the customer into the DynamoDB table.\n\n3. Integrate with AWS Lambda:\n\n * In your existing AWS Lambda function that handles the chatbot's intents, modify the necessary configuration to interact with the DynamoDB table and store the order history.\n\n4. Test and Validate:\n\n * Scan the table to make sure the item entered exists, make sure you save the lambda code and deploy the function and finally remember to build the chatbot and test! \n\n### Inventory:\n\n* Amazon Lex chatbot\n* AWS Lambda Function \n\nServices You Should Use\n\n* Amazon DynamoDB\n* AWS Lambda\n* Amazon Lex\n\n### Task Validation:\n\nOnce the conversation is complete and a replacement is requested, enter the name of the store that the Lex Chatbot recommends to drop off the package at! '_ _ _  store'\n",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "python3.11",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "chatbot-challenge-riv",
+    "path": "latestApproved.props.tasks[1]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "aaa2fee4-b5ce-463a-99ce-23c93f7ee7d8",
+      "taskNumber": 2,
+      "scorePercent": 50,
+      "dependsOnTaskIds": [
+        "2ddba252-7cbd-468a-9e51-a81128942c60"
+      ],
+      "title": "Storing Retail Order History in DynamoDB",
+      "content": "### Background:\n\nWonderful job! Your witty and funny responses have everyone smiling and orders are getting delivered on time!\n\nWhile doing your weekly reviews, you realized a new highly scalable solution is needed to store the order information for your application! You do your research and find a scalable NoSQL solution using Amazon DynamoDB. You will be testing the return item workflow where you'll be asking the retail order management chatbot for a replacement item!\n\n### Your Task:\n\n1. Create a DynamoDB table named \"RetailOrderInventory\" with the following attributes:\n   - customer_id (partition key)\n   - record_type_id (sort key)\n\n2. Locate the \"RetailOrderInventory\" table you created earlier.\n\n3. Click on the table name to open the table details.\n\n4. Using the console, create an item and choose to enter \"JSON\" view.\n\n7. In the JSON view, paste the following dummy customer data:\n\n*  Insert the following data for a customer:\n \n  {\"customer_id\": {\n    \"S\": \"9000004\"\n  },\n  \"record_type_id\": {\n    \"S\": \"O3\"\n  },\n  \"email\": {\n    \"S\": \"jane@gmail.com\"\n  },\n  \"location\": {\n    \"S\": \"1234 main street\"\n  },\n  \"order_status\": {\n    \"M\": {\n      \"delivered_date\": {\n        \"S\": \"12/20/2024\"\n      },\n      \"estimated_date\": {\n        \"S\": \"11/14/2024\"\n      },\n      \"order_number\": {\n        \"S\": \"1234561234561\"\n      },\n      \"status\": {\n        \"S\": \"delivered\"\n      }\n    }\n  },\n  \"record_type\": {\n    \"S\": \"customer_order\"\n  },\n  \"tracking_status\": {\n    \"M\": {\n      \"delivered_date\": {\n        \"S\": \"12/16/2024\"\n      },\n      \"estimated_date\": {\n        \"S\": \"12/16/2024\"\n      },\n      \"status\": {\n        \"S\": \"dispatched\"\n      },\n      \"tracking_number\": {\n        \"S\": \"123456789013\"\n      }\n    }\n  },\n  \"zip_code\": {\n    \"S\": \"67890\"\n  }\n}\n\n8. In the DynamoDBImportFunction within AWS Lambda, add code to interact with the new DynamoDB table and store the order history. \nInsert &lt;code&gt;import os &lt;/code&gt; at line 3. Insert &lt;code&gt;orderdb = os.environ['dynamodb_tablename']&lt;/code&gt; at line 13 and replace line 14 with &lt;code&gt;\n    table = dynamodb.Table(orderdb) &lt;/code&gt;\n9. You'll have to identify how to provide dynamodb_tablename as a variable to the Lambda function.\n\n10. Navigate back to the Lex chatbot and ask to 'return an item' and find replacement for order id for the customer and providing the zip code when asked. When asked to pick up or drop off, choose drop off and complete the task by entering the name of the store that the chatbot recommends!  \n\n11. Enter 'not needed' when asked for the reason to return and ask for a replacement. Enter the zip code and choose to drop off at the location.\n\n### Getting Started:\n\n1. Create the DynamoDB table:\n\n * Use the AWS Management Console to create a new DynamoDB table named \"RetailOrderInventory\" with the following attributes:\ncustomer_id (partition key)\nrecord_type_id (sort key)\n\n2. Insert the sample data:\n\n * Use the AWS Console to insert the provided JSON data for the customer into the DynamoDB table.\n\n3. Integrate with AWS Lambda:\n\n * In your existing AWS Lambda function that handles the chatbot's intents, modify the necessary configuration to interact with the DynamoDB table and store the order history.\n\n4. Test and Validate:\n\n * Scan the table to make sure the item entered exists, make sure you save the lambda code and deploy the function and finally remember to build the chatbot and test! \n\n### Inventory:\n\n* Amazon Lex chatbot\n* AWS Lambda Function \n\nServices You Should Use\n\n* Amazon DynamoDB\n* AWS Lambda\n* Amazon Lex\n\n### Task Validation:\n\nOnce the conversation is complete and a replacement is requested, enter the name of the store that the Lex Chatbot recommends to drop off the package at! '_ _ _  store'\n",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "python3.11",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "fix-my-research",
+    "path": "latest.props.tasks[2]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "0a6e6388-72af-4763-aaee-db8b55546241",
+      "taskNumber": 3,
+      "scorePercent": 40,
+      "dependsOnTaskIds": [
+        "e7fc1fd9-4dea-4448-aed4-e349663eb6a7",
+        "34ef1d08-f243-4972-84ad-fd1179fe60dd"
+      ],
+      "title": "Lambda invocation still has errors",
+      "content": "#### Background\nThe answer to task 3 is a static, the secret is a hash string that can be printed by invoking lambda function \"GenerateHashLambda\". \n\nNow that VPC Gateway Endpoint creation and fixing security group is out of way, lambda invocation still has issues. \n\n#### Your Task\n\nThe file in S3 seems to have been encrypted using a Customer Managed KMS key for which the role attached to lambda \"GenerateHashLambda\" does not have access.\nUse the below documentation to understand key policy and update it to provide lambda role permission to use the key.\n\nhttps://docs.aws.amazon.com/kms/latest/developerguide/key-policy-overview.html\n\n#### Getting Started\nThe \"Output Properties\" has the KMS Key ID to be updated.\n\n#### Inventory\n\nWork with the following resources\n\n- Generate Hash Lambda - FixResearchGenerateHashLambda\n- KMS Key - FixResearchKmsKey\n\nYou can find the resource id's in the \"Output Properties\" of the challenge dashboard \n",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "python3.8",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "fix-my-research",
+    "path": "latestApproved.props.tasks[2]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "0a6e6388-72af-4763-aaee-db8b55546241",
+      "taskNumber": 3,
+      "scorePercent": 40,
+      "dependsOnTaskIds": [
+        "e7fc1fd9-4dea-4448-aed4-e349663eb6a7",
+        "34ef1d08-f243-4972-84ad-fd1179fe60dd"
+      ],
+      "title": "Lambda invocation still has errors",
+      "content": "#### Background\nThe answer to task 3 is a static, the secret is a hash string that can be printed by invoking lambda function \"GenerateHashLambda\". \n\nNow that VPC Gateway Endpoint creation and fixing security group is out of way, lambda invocation still has issues. \n\n#### Your Task\n\nThe file in S3 seems to have been encrypted using a Customer Managed KMS key for which the role attached to lambda \"GenerateHashLambda\" does not have access.\nUse the below documentation to understand key policy and update it to provide lambda role permission to use the key.\n\nhttps://docs.aws.amazon.com/kms/latest/developerguide/key-policy-overview.html\n\n#### Getting Started\nThe \"Output Properties\" has the KMS Key ID to be updated.\n\n#### Inventory\n\nWork with the following resources\n\n- Generate Hash Lambda - FixResearchGenerateHashLambda\n- KMS Key - FixResearchKmsKey\n\nYou can find the resource id's in the \"Output Properties\" of the challenge dashboard \n",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "python3.8",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "intro-to-map-reduce",
+    "path": "latest.props.tasks[1]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "5e66c331-3c70-4e2b-b42d-97afe16df4e9",
+      "taskNumber": 2,
+      "scorePercent": 20,
+      "dependsOnTaskIds": [
+        "d472f935-9db3-4246-8062-237ecca2a041"
+      ],
+      "title": "Import Data",
+      "content": "# Background\n<br />\n\n## MapReduce\n\nMapReduce, developed by Google in 2004, represents a significant milestone in the evolution of big data processing. This programming model was born out of Google's need to analyze an exponentially growing amount of data generated by their burgeoning search engine. As the internet expanded, Google faced the unprecedented challenge of indexing a vast and rapidly increasing number of web pages, necessitating a robust, scalable, and efficient data processing solution.\n\nThe power of MapReduce lies in its simplicity and effectiveness in handling large-scale data. The model breaks down tasks into two key phases: the 'Map' phase, where it processes and transforms massive datasets into intermediate key-value pairs, and the 'Reduce' phase, which aggregates these pairs into a more concise set of results. This approach enabled parallel processing across large clusters of computers, significantly speeding up data processing tasks.\n\nMapReduce was instrumental in solving Google's indexing problem, allowing them to analyze and process the immense data from the web efficiently. The impact of MapReduce extended far beyond Google’s initial application. It laid the foundation for Apache Hadoop, an open-source framework that brought the power of distributed data processing to a broader audience. Hadoop's adoption across various industries marked a new era in big data analytics, facilitating advancements in areas ranging from genomics to finance. The influence of MapReduce is also evident in the development of subsequent big data technologies and has been integral in furthering fields like machine learning and artificial intelligence by providing a robust backbone for processing large datasets.\n\n<br />\n\n## Apache Spark\n\nAmong those subsequent big data technologies is Apache Spark, an open-source unified analytics engine for large-scale data processing. Apache Spark entered the big data landscape as an evolution of the Apache Hadoop MapReduce implementation, addressing some of its limitations, namely its speed with iterative algorithms and interactive data analysis. Apache Hadoop writes intermediate results to disk, which can be inefficient for complex computations that require multiple MapReduce iterations. Spark was designed to overcome these limitations by utilizing in-memory processing and a generalized MapReduce model known as a Directed Acyclic Graph (DAG). Where the normal MapReduce framework has only two steps (Map then Reduce), a DAG generalizes this concept and can have multiple Map and Reduce steps in different orders. This approach allows Spark to perform computations much faster than Hadoop because Spark doesn’t need to read and write from the disk every time it has to interact with the data. Additionally, Spark offers a more flexible and comprehensive data processing framework compared to Hadoop. It supports a variety of workloads like batch processing, real-time streaming, iterative algorithms, and interactive queries, all within the same engine. It is also easier to setup and interact with, hence the use of it in this Jam. \n\nThe introduction of Spark has had a significant impact on the big data ecosystem. Its ability to process data at unprecedented speeds, coupled with its versatility, has made it a popular choice for data analytics. Spark's integration with other big data tools, various cloud platforms, and its support for multiple programming languages (Scala, Java, Python, and R) have further contributed to its widespread adoption.\n\n<br />\n\n## Amazon EMR\n\nAs an increasing number of companies started realizing the value in analyzing their data, the need for big data processing tools skyrocketed. However, setting up and managing the infrastructure for big data tools such as Hadoop required significant time and technical expertise. AWS recognized this problem and developed Amazon Elastic MapReduce (EMR) in 2009. Amazon EMR was designed to simplify and scale the processing of big data across distributed computing resources. It acts as a managed cluster platform that streamlines the deployment and management of various big data processing frameworks, including Apache Hadoop and Apache Spark.\n\nAmazon EMR abstracts much of the complexity of running big data tools on premises, offering a service that automates tasks like cluster provisioning, configuration, and tuning. Users can quickly launch and scale clusters as needed, paying only for the resources they use. Amazon EMR's integration with other AWS services further enhances its utility. It seamlessly integrates with storage services like Amazon S3, database services like DynamoDB, and several others. This integration allows for flexible data storage and retrieval, making it a versatile solution for various big data tasks, from batch processing and streaming to machine learning and scientific simulations.\n\nAmazon EMR's introduction marked a pivotal shift in how organizations approach big data processing. It lowered the barrier to entry, enabling businesses of all sizes to leverage powerful big data technologies without the overhead of managing the underlying infrastructure. As a result, Amazon EMR has played a crucial role in democratizing access to big data processing tools, allowing more organizations to harness the power of data for analytics and decision-making.\n\n<br />\n\n# Proper Translation to MapReduce\n\nAlthough MapReduce and the technologies based off of it are very powerful tools, it’s important to remember that some problems don’t translate well to the MapReduce framework. Technically, you can translate any problem into a series of Map and Reduce statements, but just because you can doesn’t mean you should. Graph algorithms are notable example of computations that are difficult to efficiently replicate with MapReduce. This is because of things like repeated iterations and data dependencies, which many graph algorithms tend to have. Another well-known challenge for MapReduce based tools is real-time stream processing. There exist add-ons and libraries like Spark Streaming and GraphX, but the use case itself is still challenging for the core engine. Also, the translation to Map and Reduce statements can be time consuming and complicated depending on the problem. Sometimes, it’s better to use different tools or frameworks. \n\nSomething else to consider is the size of your dataset. For example, if you use Apache Spark to process a small dataset, then you might notice that any performance gains compared to running it on a single machine are negligible. This is because of things like file metadata that has to be created when Spark is processing the input data and task scheduling. Sometimes, preparing a cluster of computers to run a job in parallel takes longer and is more resource intensive than running the actual job.\n\n<br />\n\n# Goals\n\nIn the Summary section of this Jam, you were given context and challenged to answer a question: _Is Player 1 cheating?_ In the following Tasks, you will learn the basics of the MapReduce framework and implement those concepts to answer the question. You will use Amazon EMR and PySpark, the Python API for Apache Spark. \n\nBefore diving into the details, you need to prepare a Spark Session and load your data.\n\n* Initiate a Spark Session\n\t* Tip: You don't need a specific function for this. Try \"import sys\" and run the cell.\n* Import the games_data.csv file into Spark so that you can start operating on it\n\t* Tip: Try spark.read()\n\t* Tip: You input the data from S3 using the object URL\n* Provide an answer to the following problem: How many rows are in the dataset (not including the header)?\n\n<br />\n\n# Additional Information\n* [2003–2023: A Brief History of Big Data](https://towardsdatascience.com/2003-2023-a-brief-history-of-big-data-25712351a6bc)\n* [MapReduce](https://www.databricks.com/glossary/mapreduce)",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "nodejs18.x",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "intro-to-map-reduce",
+    "path": "latest.props.tasks[2]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "a46b3379-ef0d-44f3-aa1c-9a8350ea6241",
+      "taskNumber": 3,
+      "scorePercent": 20,
+      "dependsOnTaskIds": [
+        "d472f935-9db3-4246-8062-237ecca2a041",
+        "5e66c331-3c70-4e2b-b42d-97afe16df4e9"
+      ],
+      "title": "Mapping Data",
+      "content": "# Spark RDDs vs. Spark DataFrames\n\nApache Spark provides two main abstractions for working with data: Resilient Distributed Datasets (RDDs) and DataFrames. Both are used for distributed data processing, but they have some key differences in terms of abstraction, optimization, and ease of use.\n\n### Resilient Distributed Datasets (RDDs):\n* **Lower-Level Abstraction**: RDDs are a low-level abstraction that provides full control over data and transformations. They represent an immutable distributed collection of objects that can be processed in parallel.\n* **Functional Programming Style**: RDDs are manipulated using functional programming constructs like map, filter, reduce, etc. This requires a good understanding of lambda functions and can be more complex for users not familiar with functional programming.\n* **Manual Optimization**: With RDDs, developers need to manually optimize their transformations and data shuffling, as there is no in-built optimization engine.\n* **Use Cases**: RDDs are more suitable for use cases where fine-grained control over data processing is needed, such as custom partitioning of data or when performing complex operations where the higher-level abstractions of DataFrames are not sufficient.\n\n### DataFrames:\n* **Higher-Level Abstraction**: DataFrames provide a higher-level abstraction that is similar to tables in relational databases. They represent data in a structured format with columns and rows.\n* **Built-In Optimization Engine**: DataFrames are integrated with Spark SQL’s Catalyst optimizer, which performs advanced optimizations (like predicate pushdown). This means complex queries can be written more efficiently with less effort from the developer.\n* **Ease of Use**: With a DataFrame, you can use SQL-like syntax which is more accessible, especially for users familiar with SQL or data processing in Pandas DataFrames.\n* **Interoperability**: DataFrames support various data formats (like JSON, CSV, Parquet) and sources (like HDFS, S3, JDBC) and can be easily integrated with other big data tools.\n* **Performance**: Generally, DataFrames offer better performance compared to RDDs, especially for large-scale data processing, due to their optimization engine.\n\nChoosing between RDDs and DataFrames depends on the specific requirements of your application, your familiarity with functional programming and SQL, and the need for fine-grained control over data processing versus the desire for simplicity and optimized performance. However, in this Jam we want to be able to use Map and Reduce methods to see what they do directly, which is why we will be using RDDs instead of DataFrames since the latter’s API does not have such methods. So, you will need to convert the DataFrame from last Task into an RDD.\n\n<br />\n\n# The Map Phase \n\nThe Map phase is the first key component of the MapReduce framework. This phase involves the following steps:\n* **Input Splits**: In the MapReduce model, data is initially divided into smaller, manageable chunks known as input splits. Each input split is processed independently, allowing for parallel processing across different nodes in a cluster.\n* **Mapping**: The Map function is applied to each input split. This function is written by the user and is responsible for processing the data within the split. The nature of the processing can vary widely depending on the task at hand. It could involve filtering data, counting items, parsing text files, or any other data processing operation.\n* **Key-Value Pairs**: The outcome of the Map function is a set of intermediate key-value pairs. The Map function transforms each record in the input split into zero or more key-value pairs, which will be used as the input for the Reduce phase.\n* **Data Localization**: The Map phase typically runs on the nodes where the data is located, minimizing data transfer over the network and thus optimizing performance. This is known as data localization and is a key advantage of MapReduce, as it allows for efficient processing of massive data sets.\n\nFor example, in a word count program, the Map function reads text data from an input split and outputs key-value pairs where the key is a word and the value is the number 1 (indicating a single occurrence of the word).\n\nThe Map phase's primary goal is to get the input data ready for parallel processing, converting it into a form that can be efficiently aggregated or sorted in the subsequent Reduce phase. How you map the input data to key-value pairs will determine the rest of the process, so it’s important to choose key-value pairings that efficiently solve your problem. \n\n<br />\n\n# Goals\n\n* Convert the DataFrame into an RDD\n\t* Tip: This is a single line of code. There's a method for this.\n* Transform the RDD into one containing key-value pairs\n\t* Tip: This is the \"Map\" transformation. You will be using the actual map() function.\n* Immediately after running your map function in the notebook cell, run the countByKey() action on the newly transformed RDD (the one returned by your map function) and type as your answer the output returned.\n\t* For example, assume your original RDD is named ```my_rdd``` and your transformed RDD is named ```mapped_rdd```. Then your map transformation code should look like this ```mapped_rdd = my_rdd.map(&lt; your_code &gt;)```\n    * After running that line of code, you would then write ```mapped_rdd.countByKey()```, run the cell, and you should see some output like ```defaultdict(&lt; class 'some_type' &gt;, {key_1: value_1, ..., key_n: value_n})```.\n    * Copy the full output text and paste it as your answer.\n\n<br />\n\n# Additional Information\n* [A Tale of Three Apache Spark APIs: RDDs vs DataFrames and Datasets](https://www.databricks.com/blog/2016/07/14/a-tale-of-three-apache-spark-apis-rdds-dataframes-and-datasets.html)",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "nodejs18.x",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "intro-to-map-reduce",
+    "path": "latest.props.tasks[3]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "2acf5d1b-bd5d-4dfa-aa28-615b2ae40222",
+      "taskNumber": 4,
+      "scorePercent": 20,
+      "dependsOnTaskIds": [
+        "d472f935-9db3-4246-8062-237ecca2a041",
+        "5e66c331-3c70-4e2b-b42d-97afe16df4e9",
+        "a46b3379-ef0d-44f3-aa1c-9a8350ea6241"
+      ],
+      "title": "Shuffling Data",
+      "content": "# The Hidden Shuffle Phase\n\nData shuffling in MapReduce is a crucial process that occurs between the Map and Reduce phases. It involves redistributing, sorting, and grouping the intermediate key-value pairs generated by the Map tasks so that all values associated with the same key are brought together to be processed by the Reduce tasks. This process is often considered one of the most complex and resource-intensive parts of a MapReduce job. However, it is very necessary. \n\nThe essence of many data processing tasks in distributed systems is to bring together related data elements. In the context of MapReduce, data shuffling ensures that all values associated with the same key are brought together. This is essential for tasks like aggregation, sorting, and joining datasets, where operations are performed on data grouped by a specific criterion (the key). The Map phase processes data independently across different nodes, generating key-value pairs. The Reduce phase then performs operations on these pairs. Shuffling is the bridge between these two phases, gathering, grouping, and organizing the output of the Map phase in a way that the Reduce phase can effectively process it.\nHere's a breakdown of how data shuffling works in MapReduce:\n* **Output of Map Phase**: In the Map phase, each mapper processes a portion of the input data and generates intermediate key-value pairs.\n* **Partitioning**: The output of each mapper is partitioned into segments, one for each reducer. The partitioning is typically done based on the key, using a hashing function. This ensures that all key-value pairs with the same key are sent to the same reducer.\n* **Sorting**: Within each partition, the data is sorted by key. This sorting can happen during the writing of data by the mapper or in the next phase when data is read by the reducer.\n* **Shuffling**: The sorted and partitioned data is then transferred across the network from the nodes running the map tasks to the nodes running the reduce tasks. This step is known as shuffling. During shuffling, data belonging to a single key, which may be spread across multiple mappers, is gathered together so that it can be processed in a single reduce task.\n* **Grouping**: Once the data arrives at the reducer, it is grouped by key. All values associated with a particular key are brought together to form a list of values.\n* **Input to Reduce Phase**: The grouped key-value pairs are then fed into the reduce tasks. Each reducer iterates over its assigned keys and processes the corresponding list of values.\n\n<br />\n\n# Challenges of Data Shuffling\n\n* **Performance**: Shuffling can be a performance bottleneck, especially for large datasets, as it involves network I/O and disk I/O.\n* **Resource Intensive**: The process can be resource-intensive in terms of network bandwidth and disk space, particularly when dealing with large volumes of data.\n* **Data Skew**: If some keys have significantly more data than others, it can lead to uneven load distribution among reducers, known as data skew, which can negatively impact performance.\n\nOptimizing the shuffling process is key to improving the performance of a MapReduce job. Techniques like combiners (which perform mini-reduce operations on the mapper's output), partitioning strategies, and tuning the number of reducers are common ways to optimize the shuffling phase.\n\n<br />\n\n# groupByKey\n\nCentral to the shuffling phase is the transformation groupByKey. It takes as input a key-value pair RDD and returns as output an RDD consisting of tuples, where the first element is a key and the second element is an iterable collection of values corresponding to that key. At a high level, groupByKey takes the output of the Map phase and shuffles it across the network so that matching keys and their respective values are on the same Reduce node. It will then aggregate these matching key-value pairs into the output RDD described earlier. \n\nWhile groupByKey is a powerful operation, it can be inefficient, especially with large datasets. This is because it pulls all the values for a particular key into memory and the value list for a single key cannot span across multiple Reduce nodes, so this can cause out of memory errors if the value list is too large. Later in this Jam, we will see an alternative to groupByKey.\n\n<br />\n\n# Goals\n\n* Group data by key\n\t* Tip: This is another single line of code answer.\n* Immediately after running your grouping code, run the following in another cell: ```type(grouped_rdd.first()[1])```, where ```grouped_rdd``` is the variable name for your newly grouped RDD. Copy and paste the output as your answer.\n\t* For example, assume that your mapped RDD is named ```mapped_rdd```, your grouped RDD is named ```grouped_rdd```, and your grouping is performed by some function named ```grouping_func()```. Then you would write ```grouped_rdd = mapped_rdd.grouping_func()```.\n\t* After running this code, you would then write ```type(grouped_rdd.first()[1])``` and run the cell. You should receive some output like ```&lt; class 'some_type' &gt;```.\n    * Copy and paste the output as your answer.\n\n<br />\n\n# Additional Information\n* [Shuffling: What it is and why it's important](https://www.youtube.com/watch?v=kbQmZiT1gnA&amp;t=504s)",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "nodejs18.x",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "intro-to-map-reduce",
+    "path": "latest.props.tasks[4]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "d0ac0d5a-3220-49d1-9d02-6736ff270047",
+      "taskNumber": 5,
+      "scorePercent": 20,
+      "dependsOnTaskIds": [
+        "d472f935-9db3-4246-8062-237ecca2a041",
+        "5e66c331-3c70-4e2b-b42d-97afe16df4e9",
+        "a46b3379-ef0d-44f3-aa1c-9a8350ea6241",
+        "2acf5d1b-bd5d-4dfa-aa28-615b2ae40222"
+      ],
+      "title": "Reducing Data",
+      "content": "# The Reduce Phase\n\nThe Reduce phase is the second (arguably third) key component of the MapReduce framework, following the Map phase. This phase takes the sorted output from the Map phase and performs a summary operation, merging the intermediate key-value pairs into a smaller set of values. \n\nHere's how the Reduce phase works:\n* **Input from the Map Phase**: After the Map phase, each key and its corresponding list of values are shuffled and sorted across the cluster. The Reduce phase receives this output as its input, where each reducer is assigned a set of keys and their associated values.\n* **Processing in the Reducer**: For each key, the reducer iterates over the list of values and applies a reduce function to merge these values. The nature of this merging depends on the problem being solved. It could be a summation, finding a minimum or maximum, concatenating strings, or other operations that combine the intermediate data into a smaller set.\n* **Reducer Function**: The reduce function is user-defined and determines how the values for a single key are combined. For instance, in a word count example, the reduce function would sum all counts (values) associated with the same word (key).\n* **Output of the Reduce Phase**: The output from the Reduce phase is typically a smaller set of key-value pairs, representing the summarized results of the input data. These results are then written to the output files in the file system.\n* **Parallel Execution**: Just like the Map phase, the Reduce phase is also executed in parallel. Each reducer works on a different set of keys, allowing the summarization process to be distributed across multiple nodes in the cluster.\n* **Final Output**: Once all reducers have completed their tasks, the final output is stored in the file system, which can be a set of files in HDFS (Hadoop Distributed File System) or another distributed storage system.\n\nThe Reduce phase is essential in MapReduce for consolidating and summarizing the large datasets processed in the Map phase. It is the step where the actual aggregation and analysis of data typically happen, leading to the final results that answer the user's query or solve the problem at hand.\n\n<br />\n\n# collect\n\nAfter the data has been reduced, it is still distributed across the Reduce nodes. In order to use the data, it needs to be collected into one structure. For this, Spark has the collect method. In distributed computing frameworks like Apache Spark, this method is an action that retrieves all elements of a distributed dataset (such as an RDD or DataFrame) from the cluster and returns them to the local machine as a single collection in the driver program. It's an essential method for moving data from the distributed environment to the local environment, typically for final analysis, debugging, or testing purposes.\n\nExplained in greater detail:\n* **Functionality**: When you call collect, it triggers the computation of all transformations that have been applied to the distributed dataset (like RDDs in Spark) and collects the results to the driver node. This is different from transformations (like map or filter) which are lazily evaluated and don't compute their results immediately.\n* **Usage**: collect is often used after applying a series of transformations to a dataset, and you want to bring the data back to the driver node for further use in your application, such as printing the results, performing additional non-distributed computations, or exporting the data to a file.\n* **Caution with Large Data**: While collect is very useful, it can be dangerous when working with large datasets. Since it gathers all data to the driver node, it can cause out-of-memory errors if the collected data is too large to fit in the driver’s memory. Therefore, it's important to ensure that the dataset you're collecting is small enough to be handled by a single machine.\n* **Alternatives for Large Datasets**: For larger datasets, actions like take (which retrieves only a specified number of elements) or saveAsTextFile (which saves the dataset to a distributed storage system like HDFS) are safer alternatives that avoid the risk of overwhelming the driver node's memory.\n\n# Goals\n\n* Reduce the grouped RDD\n\t* Tip: You'll need another map function. For each key, you now have a list of all values. Given the goal of the Jam, what operation should you perform on those values?\n* Collect the reduced RDD\n\t* Tip: Another single line of code.\n* Provide an answer to the following problem: What is Player 1's winning percentage? (Answer in the format X%. For example: 5%, 28%, 77%, etc.)",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "nodejs18.x",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "intro-to-map-reduce",
+    "path": "latestApproved.props.tasks[1]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "5e66c331-3c70-4e2b-b42d-97afe16df4e9",
+      "taskNumber": 2,
+      "scorePercent": 20,
+      "dependsOnTaskIds": [
+        "d472f935-9db3-4246-8062-237ecca2a041"
+      ],
+      "title": "Import Data",
+      "content": "# Background\n<br />\n\n## MapReduce\n\nMapReduce, developed by Google in 2004, represents a significant milestone in the evolution of big data processing. This programming model was born out of Google's need to analyze an exponentially growing amount of data generated by their burgeoning search engine. As the internet expanded, Google faced the unprecedented challenge of indexing a vast and rapidly increasing number of web pages, necessitating a robust, scalable, and efficient data processing solution.\n\nThe power of MapReduce lies in its simplicity and effectiveness in handling large-scale data. The model breaks down tasks into two key phases: the 'Map' phase, where it processes and transforms massive datasets into intermediate key-value pairs, and the 'Reduce' phase, which aggregates these pairs into a more concise set of results. This approach enabled parallel processing across large clusters of computers, significantly speeding up data processing tasks.\n\nMapReduce was instrumental in solving Google's indexing problem, allowing them to analyze and process the immense data from the web efficiently. The impact of MapReduce extended far beyond Google’s initial application. It laid the foundation for Apache Hadoop, an open-source framework that brought the power of distributed data processing to a broader audience. Hadoop's adoption across various industries marked a new era in big data analytics, facilitating advancements in areas ranging from genomics to finance. The influence of MapReduce is also evident in the development of subsequent big data technologies and has been integral in furthering fields like machine learning and artificial intelligence by providing a robust backbone for processing large datasets.\n\n<br />\n\n## Apache Spark\n\nAmong those subsequent big data technologies is Apache Spark, an open-source unified analytics engine for large-scale data processing. Apache Spark entered the big data landscape as an evolution of the Apache Hadoop MapReduce implementation, addressing some of its limitations, namely its speed with iterative algorithms and interactive data analysis. Apache Hadoop writes intermediate results to disk, which can be inefficient for complex computations that require multiple MapReduce iterations. Spark was designed to overcome these limitations by utilizing in-memory processing and a generalized MapReduce model known as a Directed Acyclic Graph (DAG). Where the normal MapReduce framework has only two steps (Map then Reduce), a DAG generalizes this concept and can have multiple Map and Reduce steps in different orders. This approach allows Spark to perform computations much faster than Hadoop because Spark doesn’t need to read and write from the disk every time it has to interact with the data. Additionally, Spark offers a more flexible and comprehensive data processing framework compared to Hadoop. It supports a variety of workloads like batch processing, real-time streaming, iterative algorithms, and interactive queries, all within the same engine. It is also easier to setup and interact with, hence the use of it in this Jam. \n\nThe introduction of Spark has had a significant impact on the big data ecosystem. Its ability to process data at unprecedented speeds, coupled with its versatility, has made it a popular choice for data analytics. Spark's integration with other big data tools, various cloud platforms, and its support for multiple programming languages (Scala, Java, Python, and R) have further contributed to its widespread adoption.\n\n<br />\n\n## Amazon EMR\n\nAs an increasing number of companies started realizing the value in analyzing their data, the need for big data processing tools skyrocketed. However, setting up and managing the infrastructure for big data tools such as Hadoop required significant time and technical expertise. AWS recognized this problem and developed Amazon Elastic MapReduce (EMR) in 2009. Amazon EMR was designed to simplify and scale the processing of big data across distributed computing resources. It acts as a managed cluster platform that streamlines the deployment and management of various big data processing frameworks, including Apache Hadoop and Apache Spark.\n\nAmazon EMR abstracts much of the complexity of running big data tools on premises, offering a service that automates tasks like cluster provisioning, configuration, and tuning. Users can quickly launch and scale clusters as needed, paying only for the resources they use. Amazon EMR's integration with other AWS services further enhances its utility. It seamlessly integrates with storage services like Amazon S3, database services like DynamoDB, and several others. This integration allows for flexible data storage and retrieval, making it a versatile solution for various big data tasks, from batch processing and streaming to machine learning and scientific simulations.\n\nAmazon EMR's introduction marked a pivotal shift in how organizations approach big data processing. It lowered the barrier to entry, enabling businesses of all sizes to leverage powerful big data technologies without the overhead of managing the underlying infrastructure. As a result, Amazon EMR has played a crucial role in democratizing access to big data processing tools, allowing more organizations to harness the power of data for analytics and decision-making.\n\n<br />\n\n# Proper Translation to MapReduce\n\nAlthough MapReduce and the technologies based off of it are very powerful tools, it’s important to remember that some problems don’t translate well to the MapReduce framework. Technically, you can translate any problem into a series of Map and Reduce statements, but just because you can doesn’t mean you should. Graph algorithms are notable example of computations that are difficult to efficiently replicate with MapReduce. This is because of things like repeated iterations and data dependencies, which many graph algorithms tend to have. Another well-known challenge for MapReduce based tools is real-time stream processing. There exist add-ons and libraries like Spark Streaming and GraphX, but the use case itself is still challenging for the core engine. Also, the translation to Map and Reduce statements can be time consuming and complicated depending on the problem. Sometimes, it’s better to use different tools or frameworks. \n\nSomething else to consider is the size of your dataset. For example, if you use Apache Spark to process a small dataset, then you might notice that any performance gains compared to running it on a single machine are negligible. This is because of things like file metadata that has to be created when Spark is processing the input data and task scheduling. Sometimes, preparing a cluster of computers to run a job in parallel takes longer and is more resource intensive than running the actual job.\n\n<br />\n\n# Goals\n\nIn the Summary section of this Jam, you were given context and challenged to answer a question: _Is Player 1 cheating?_ In the following Tasks, you will learn the basics of the MapReduce framework and implement those concepts to answer the question. You will use Amazon EMR and PySpark, the Python API for Apache Spark. \n\nBefore diving into the details, you need to prepare a Spark Session and load your data.\n\n* Initiate a Spark Session\n\t* Tip: You don't need a specific function for this. Try \"import sys\" and run the cell.\n* Import the games_data.csv file into Spark so that you can start operating on it\n\t* Tip: Try spark.read()\n\t* Tip: You input the data from S3 using the object URL\n* Provide an answer to the following problem: How many rows are in the dataset (not including the header)?\n\n<br />\n\n# Additional Information\n* [2003–2023: A Brief History of Big Data](https://towardsdatascience.com/2003-2023-a-brief-history-of-big-data-25712351a6bc)\n* [MapReduce](https://www.databricks.com/glossary/mapreduce)",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "nodejs18.x",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "intro-to-map-reduce",
+    "path": "latestApproved.props.tasks[2]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "a46b3379-ef0d-44f3-aa1c-9a8350ea6241",
+      "taskNumber": 3,
+      "scorePercent": 20,
+      "dependsOnTaskIds": [
+        "d472f935-9db3-4246-8062-237ecca2a041",
+        "5e66c331-3c70-4e2b-b42d-97afe16df4e9"
+      ],
+      "title": "Mapping Data",
+      "content": "# Spark RDDs vs. Spark DataFrames\n\nApache Spark provides two main abstractions for working with data: Resilient Distributed Datasets (RDDs) and DataFrames. Both are used for distributed data processing, but they have some key differences in terms of abstraction, optimization, and ease of use.\n\n### Resilient Distributed Datasets (RDDs):\n* **Lower-Level Abstraction**: RDDs are a low-level abstraction that provides full control over data and transformations. They represent an immutable distributed collection of objects that can be processed in parallel.\n* **Functional Programming Style**: RDDs are manipulated using functional programming constructs like map, filter, reduce, etc. This requires a good understanding of lambda functions and can be more complex for users not familiar with functional programming.\n* **Manual Optimization**: With RDDs, developers need to manually optimize their transformations and data shuffling, as there is no in-built optimization engine.\n* **Use Cases**: RDDs are more suitable for use cases where fine-grained control over data processing is needed, such as custom partitioning of data or when performing complex operations where the higher-level abstractions of DataFrames are not sufficient.\n\n### DataFrames:\n* **Higher-Level Abstraction**: DataFrames provide a higher-level abstraction that is similar to tables in relational databases. They represent data in a structured format with columns and rows.\n* **Built-In Optimization Engine**: DataFrames are integrated with Spark SQL’s Catalyst optimizer, which performs advanced optimizations (like predicate pushdown). This means complex queries can be written more efficiently with less effort from the developer.\n* **Ease of Use**: With a DataFrame, you can use SQL-like syntax which is more accessible, especially for users familiar with SQL or data processing in Pandas DataFrames.\n* **Interoperability**: DataFrames support various data formats (like JSON, CSV, Parquet) and sources (like HDFS, S3, JDBC) and can be easily integrated with other big data tools.\n* **Performance**: Generally, DataFrames offer better performance compared to RDDs, especially for large-scale data processing, due to their optimization engine.\n\nChoosing between RDDs and DataFrames depends on the specific requirements of your application, your familiarity with functional programming and SQL, and the need for fine-grained control over data processing versus the desire for simplicity and optimized performance. However, in this Jam we want to be able to use Map and Reduce methods to see what they do directly, which is why we will be using RDDs instead of DataFrames since the latter’s API does not have such methods. So, you will need to convert the DataFrame from last Task into an RDD.\n\n<br />\n\n# The Map Phase \n\nThe Map phase is the first key component of the MapReduce framework. This phase involves the following steps:\n* **Input Splits**: In the MapReduce model, data is initially divided into smaller, manageable chunks known as input splits. Each input split is processed independently, allowing for parallel processing across different nodes in a cluster.\n* **Mapping**: The Map function is applied to each input split. This function is written by the user and is responsible for processing the data within the split. The nature of the processing can vary widely depending on the task at hand. It could involve filtering data, counting items, parsing text files, or any other data processing operation.\n* **Key-Value Pairs**: The outcome of the Map function is a set of intermediate key-value pairs. The Map function transforms each record in the input split into zero or more key-value pairs, which will be used as the input for the Reduce phase.\n* **Data Localization**: The Map phase typically runs on the nodes where the data is located, minimizing data transfer over the network and thus optimizing performance. This is known as data localization and is a key advantage of MapReduce, as it allows for efficient processing of massive data sets.\n\nFor example, in a word count program, the Map function reads text data from an input split and outputs key-value pairs where the key is a word and the value is the number 1 (indicating a single occurrence of the word).\n\nThe Map phase's primary goal is to get the input data ready for parallel processing, converting it into a form that can be efficiently aggregated or sorted in the subsequent Reduce phase. How you map the input data to key-value pairs will determine the rest of the process, so it’s important to choose key-value pairings that efficiently solve your problem. \n\n<br />\n\n# Goals\n\n* Convert the DataFrame into an RDD\n\t* Tip: This is a single line of code. There's a method for this.\n* Transform the RDD into one containing key-value pairs\n\t* Tip: This is the \"Map\" transformation. You will be using the actual map() function.\n* Immediately after running your map function in the notebook cell, run the countByKey() action on the newly transformed RDD (the one returned by your map function) and type as your answer the output returned.\n\t* For example, assume your original RDD is named ```my_rdd``` and your transformed RDD is named ```mapped_rdd```. Then your map transformation code should look like this ```mapped_rdd = my_rdd.map(&lt; your_code &gt;)```\n    * After running that line of code, you would then write ```mapped_rdd.countByKey()```, run the cell, and you should see some output like ```defaultdict(&lt; class 'some_type' &gt;, {key_1: value_1, ..., key_n: value_n})```.\n    * Copy the full output text and paste it as your answer.\n\n<br />\n\n# Additional Information\n* [A Tale of Three Apache Spark APIs: RDDs vs DataFrames and Datasets](https://www.databricks.com/blog/2016/07/14/a-tale-of-three-apache-spark-apis-rdds-dataframes-and-datasets.html)",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "nodejs18.x",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "intro-to-map-reduce",
+    "path": "latestApproved.props.tasks[3]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "2acf5d1b-bd5d-4dfa-aa28-615b2ae40222",
+      "taskNumber": 4,
+      "scorePercent": 20,
+      "dependsOnTaskIds": [
+        "d472f935-9db3-4246-8062-237ecca2a041",
+        "5e66c331-3c70-4e2b-b42d-97afe16df4e9",
+        "a46b3379-ef0d-44f3-aa1c-9a8350ea6241"
+      ],
+      "title": "Shuffling Data",
+      "content": "# The Hidden Shuffle Phase\n\nData shuffling in MapReduce is a crucial process that occurs between the Map and Reduce phases. It involves redistributing, sorting, and grouping the intermediate key-value pairs generated by the Map tasks so that all values associated with the same key are brought together to be processed by the Reduce tasks. This process is often considered one of the most complex and resource-intensive parts of a MapReduce job. However, it is very necessary. \n\nThe essence of many data processing tasks in distributed systems is to bring together related data elements. In the context of MapReduce, data shuffling ensures that all values associated with the same key are brought together. This is essential for tasks like aggregation, sorting, and joining datasets, where operations are performed on data grouped by a specific criterion (the key). The Map phase processes data independently across different nodes, generating key-value pairs. The Reduce phase then performs operations on these pairs. Shuffling is the bridge between these two phases, gathering, grouping, and organizing the output of the Map phase in a way that the Reduce phase can effectively process it.\nHere's a breakdown of how data shuffling works in MapReduce:\n* **Output of Map Phase**: In the Map phase, each mapper processes a portion of the input data and generates intermediate key-value pairs.\n* **Partitioning**: The output of each mapper is partitioned into segments, one for each reducer. The partitioning is typically done based on the key, using a hashing function. This ensures that all key-value pairs with the same key are sent to the same reducer.\n* **Sorting**: Within each partition, the data is sorted by key. This sorting can happen during the writing of data by the mapper or in the next phase when data is read by the reducer.\n* **Shuffling**: The sorted and partitioned data is then transferred across the network from the nodes running the map tasks to the nodes running the reduce tasks. This step is known as shuffling. During shuffling, data belonging to a single key, which may be spread across multiple mappers, is gathered together so that it can be processed in a single reduce task.\n* **Grouping**: Once the data arrives at the reducer, it is grouped by key. All values associated with a particular key are brought together to form a list of values.\n* **Input to Reduce Phase**: The grouped key-value pairs are then fed into the reduce tasks. Each reducer iterates over its assigned keys and processes the corresponding list of values.\n\n<br />\n\n# Challenges of Data Shuffling\n\n* **Performance**: Shuffling can be a performance bottleneck, especially for large datasets, as it involves network I/O and disk I/O.\n* **Resource Intensive**: The process can be resource-intensive in terms of network bandwidth and disk space, particularly when dealing with large volumes of data.\n* **Data Skew**: If some keys have significantly more data than others, it can lead to uneven load distribution among reducers, known as data skew, which can negatively impact performance.\n\nOptimizing the shuffling process is key to improving the performance of a MapReduce job. Techniques like combiners (which perform mini-reduce operations on the mapper's output), partitioning strategies, and tuning the number of reducers are common ways to optimize the shuffling phase.\n\n<br />\n\n# groupByKey\n\nCentral to the shuffling phase is the transformation groupByKey. It takes as input a key-value pair RDD and returns as output an RDD consisting of tuples, where the first element is a key and the second element is an iterable collection of values corresponding to that key. At a high level, groupByKey takes the output of the Map phase and shuffles it across the network so that matching keys and their respective values are on the same Reduce node. It will then aggregate these matching key-value pairs into the output RDD described earlier. \n\nWhile groupByKey is a powerful operation, it can be inefficient, especially with large datasets. This is because it pulls all the values for a particular key into memory and the value list for a single key cannot span across multiple Reduce nodes, so this can cause out of memory errors if the value list is too large. Later in this Jam, we will see an alternative to groupByKey.\n\n<br />\n\n# Goals\n\n* Group data by key\n\t* Tip: This is another single line of code answer.\n* Immediately after running your grouping code, run the following in another cell: ```type(grouped_rdd.first()[1])```, where ```grouped_rdd``` is the variable name for your newly grouped RDD. Copy and paste the output as your answer.\n\t* For example, assume that your mapped RDD is named ```mapped_rdd```, your grouped RDD is named ```grouped_rdd```, and your grouping is performed by some function named ```grouping_func()```. Then you would write ```grouped_rdd = mapped_rdd.grouping_func()```.\n\t* After running this code, you would then write ```type(grouped_rdd.first()[1])``` and run the cell. You should receive some output like ```&lt; class 'some_type' &gt;```.\n    * Copy and paste the output as your answer.\n\n<br />\n\n# Additional Information\n* [Shuffling: What it is and why it's important](https://www.youtube.com/watch?v=kbQmZiT1gnA&amp;t=504s)",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "nodejs18.x",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "intro-to-map-reduce",
+    "path": "latestApproved.props.tasks[4]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "d0ac0d5a-3220-49d1-9d02-6736ff270047",
+      "taskNumber": 5,
+      "scorePercent": 20,
+      "dependsOnTaskIds": [
+        "d472f935-9db3-4246-8062-237ecca2a041",
+        "5e66c331-3c70-4e2b-b42d-97afe16df4e9",
+        "a46b3379-ef0d-44f3-aa1c-9a8350ea6241",
+        "2acf5d1b-bd5d-4dfa-aa28-615b2ae40222"
+      ],
+      "title": "Reducing Data",
+      "content": "# The Reduce Phase\n\nThe Reduce phase is the second (arguably third) key component of the MapReduce framework, following the Map phase. This phase takes the sorted output from the Map phase and performs a summary operation, merging the intermediate key-value pairs into a smaller set of values. \n\nHere's how the Reduce phase works:\n* **Input from the Map Phase**: After the Map phase, each key and its corresponding list of values are shuffled and sorted across the cluster. The Reduce phase receives this output as its input, where each reducer is assigned a set of keys and their associated values.\n* **Processing in the Reducer**: For each key, the reducer iterates over the list of values and applies a reduce function to merge these values. The nature of this merging depends on the problem being solved. It could be a summation, finding a minimum or maximum, concatenating strings, or other operations that combine the intermediate data into a smaller set.\n* **Reducer Function**: The reduce function is user-defined and determines how the values for a single key are combined. For instance, in a word count example, the reduce function would sum all counts (values) associated with the same word (key).\n* **Output of the Reduce Phase**: The output from the Reduce phase is typically a smaller set of key-value pairs, representing the summarized results of the input data. These results are then written to the output files in the file system.\n* **Parallel Execution**: Just like the Map phase, the Reduce phase is also executed in parallel. Each reducer works on a different set of keys, allowing the summarization process to be distributed across multiple nodes in the cluster.\n* **Final Output**: Once all reducers have completed their tasks, the final output is stored in the file system, which can be a set of files in HDFS (Hadoop Distributed File System) or another distributed storage system.\n\nThe Reduce phase is essential in MapReduce for consolidating and summarizing the large datasets processed in the Map phase. It is the step where the actual aggregation and analysis of data typically happen, leading to the final results that answer the user's query or solve the problem at hand.\n\n<br />\n\n# collect\n\nAfter the data has been reduced, it is still distributed across the Reduce nodes. In order to use the data, it needs to be collected into one structure. For this, Spark has the collect method. In distributed computing frameworks like Apache Spark, this method is an action that retrieves all elements of a distributed dataset (such as an RDD or DataFrame) from the cluster and returns them to the local machine as a single collection in the driver program. It's an essential method for moving data from the distributed environment to the local environment, typically for final analysis, debugging, or testing purposes.\n\nExplained in greater detail:\n* **Functionality**: When you call collect, it triggers the computation of all transformations that have been applied to the distributed dataset (like RDDs in Spark) and collects the results to the driver node. This is different from transformations (like map or filter) which are lazily evaluated and don't compute their results immediately.\n* **Usage**: collect is often used after applying a series of transformations to a dataset, and you want to bring the data back to the driver node for further use in your application, such as printing the results, performing additional non-distributed computations, or exporting the data to a file.\n* **Caution with Large Data**: While collect is very useful, it can be dangerous when working with large datasets. Since it gathers all data to the driver node, it can cause out-of-memory errors if the collected data is too large to fit in the driver’s memory. Therefore, it's important to ensure that the dataset you're collecting is small enough to be handled by a single machine.\n* **Alternatives for Large Datasets**: For larger datasets, actions like take (which retrieves only a specified number of elements) or saveAsTextFile (which saves the dataset to a distributed storage system like HDFS) are safer alternatives that avoid the risk of overwhelming the driver node's memory.\n\n# Goals\n\n* Reduce the grouped RDD\n\t* Tip: You'll need another map function. For each key, you now have a list of all values. Given the goal of the Jam, what operation should you perform on those values?\n* Collect the reduced RDD\n\t* Tip: Another single line of code.\n* Provide an answer to the following problem: What is Player 1's winning percentage? (Answer in the format X%. For example: 5%, 28%, 77%, etc.)",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "nodejs18.x",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "lambda-interceptor",
+    "path": "latest.props.tasks[0]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "288baf2e-5601-440a-ad42-b88537e52304",
+      "taskNumber": 1,
+      "scorePercent": 20,
+      "title": "Confirm the leak",
+      "content": "#### Background\nBefore you change anything, you need to see the problem for yourself and prove the\nsensitive data is actually escaping through the assistant.\n\n**How the application works:** A user asks a question to the HR AI Agent (running on AgentCore Runtime). The agent makes an MCP tool call through the AgentCore Gateway, which forwards the request to the HR MCP Tool (a Lambda function that fetches employee records). The response flows back through the same path: Tool → Gateway → Agent → User. The Gateway acts as a managed MCP server that connects agents to tools and can filter or transform data as it passes through.\n\n<br /><img src=\"https://aws-jam-challenge-resources.s3.amazonaws.com/lambda-interceptor/pre_fix_architecture.png\" alt=\"Pre-fix architecture\" width=\"1000\" height=\"130\" />\n\n\n#### Your Task\nInvoke the agent through its AgentCore Runtime endpoint, read the employee record\nit returns, and report the Social Security number that is being exposed.\n\n#### Getting Started\n- In **AgentCore Runtime console**, open the HR Assistant agent, and use the built-in test feature to send the following query: `{\"prompt\": \"get employee E-1001\"}`\n- Look closely at the JSON response. You should only see name and department, but you'll notice two extra fields that should never be there: ssn and salary. That's your proof the system is leaking PII.\n\n#### Inventory\n- AgentCore Agent Runtime\n\n#### Services You Should Use\n- Amazon Bedrock AgentCore Runtime\n\n#### Task Validation\nStatic answer. Submit the **SSN value** exposed in the agent's response (XXX-XX-XXXX). The task\ncompletes when the submitted value matches the leaked SSN.\n",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "nodejs24.x",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "lambda-interceptor",
+    "path": "latestApproved.props.tasks[0]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "288baf2e-5601-440a-ad42-b88537e52304",
+      "taskNumber": 1,
+      "scorePercent": 20,
+      "title": "Confirm the leak",
+      "content": "#### Background\nBefore you change anything, you need to see the problem for yourself and prove the\nsensitive data is actually escaping through the assistant.\n\n**How the application works:** A user asks a question to the HR AI Agent (running on AgentCore Runtime). The agent makes an MCP tool call through the AgentCore Gateway, which forwards the request to the HR MCP Tool (a Lambda function that fetches employee records). The response flows back through the same path: Tool → Gateway → Agent → User. The Gateway acts as a managed MCP server that connects agents to tools and can filter or transform data as it passes through.\n\n<br /><img src=\"https://aws-jam-challenge-resources.s3.amazonaws.com/lambda-interceptor/pre_fix_architecture.png\" alt=\"Pre-fix architecture\" width=\"1000\" height=\"130\" />\n\n\n#### Your Task\nInvoke the agent through its AgentCore Runtime endpoint, read the employee record\nit returns, and report the Social Security number that is being exposed.\n\n#### Getting Started\n- In **AgentCore Runtime console**, open the HR Assistant agent, and use the built-in test feature to send the following query: `{\"prompt\": \"get employee E-1001\"}`\n- Look closely at the JSON response. You should only see name and department, but you'll notice two extra fields that should never be there: ssn and salary. That's your proof the system is leaking PII.\n\n#### Inventory\n- AgentCore Agent Runtime\n\n#### Services You Should Use\n- Amazon Bedrock AgentCore Runtime\n\n#### Task Validation\nStatic answer. Submit the **SSN value** exposed in the agent's response (XXX-XX-XXXX). The task\ncompletes when the submitted value matches the leaked SSN.\n",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "nodejs24.x",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "network-analyzer-segregation",
+    "path": "latest.props.tasks[0]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "fc209254-a873-46ea-b280-424858cf41e9",
+      "taskNumber": 1,
+      "scorePercent": 30,
+      "title": "UNCOVERING CONNECTION",
+      "content": "<h1>Background</h1>\n<p>As the security engineer for a large project that involves processing personal, sensitive, and highly valuable data, your role is to ensure the integrity and confidentiality of this information. You work closely with the project team to identify and mitigate potential security risks, implement appropriate safeguards, and ensure compliance with relevant laws and regulations.</p><p>\n\n</p><p>As you sit at your desk, you receive an urgent call from the security operations center (SOC) team. The consultant informs you that during the course of a recent security team investigation, an IP address was detected that doesn't belong to the production network segment. This news sends a shiver down your spine, as you know that such a breach could potentially compromise sensitive information and put the entire project at risk.</p>\n\n\n<h3>Inventory</h3>\n<ul><li><p>VPCs</p></li><li><p>EC2</p></li></ul>\n\n\n\n<h3>Getting Started</h3>\n<p>Anomaly detection mechanisms within the production environment have flagged a concerning observation: a known EC2 instance appears to be communicating with another EC2 instance belonging to the same organization but outside the expected environment. Further investigation is warranted to determine the nature and intent of this communication, and to evaluate any potential security risks posed by these actions.\n\nEmbark on a quest to discover the ultimate VPC feature that can unravel the mystery and enhance the discovery phase!</p>\n\n<h3>Your Task</h3>\n<p>Your primary goal is to use an AWS solution to create an analysis to identify the origin of incoming communication. This will enable you to determine how many findings are associated and where it is coming from.\n\n</p><h3>Task Validation</h3>\n<p>To obtain the answer, you need to identify the AWS solution which can create the analyzer to discover how many findings are associated between the unknown environment with production instance environment.\n\nThe answer need to be the initials of the service name using Capital Letter and the number of findings discovered.\nExample (Initials+Findings): Let's assume you used the VPC Flow Logs service and discovered 50 findings, the answer would be: VFL50.\n\n</p><p>HINT: Don't waste your time, please remember that activating VPC Flow Logs is not allowed for your project. This is because has specific budget constraints and enabling it would incur additional expenses. Find the best service to resolve the task.</p>\n",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "python3.9",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "network-analyzer-segregation",
+    "path": "latestApproved.props.tasks[0]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "fc209254-a873-46ea-b280-424858cf41e9",
+      "taskNumber": 1,
+      "scorePercent": 30,
+      "title": "UNCOVERING CONNECTION",
+      "content": "<h1>Background</h1>\n<p>As the security engineer for a large project that involves processing personal, sensitive, and highly valuable data, your role is to ensure the integrity and confidentiality of this information. You work closely with the project team to identify and mitigate potential security risks, implement appropriate safeguards, and ensure compliance with relevant laws and regulations.</p><p>\n\n</p><p>As you sit at your desk, you receive an urgent call from the security operations center (SOC) team. The consultant informs you that during the course of a recent security team investigation, an IP address was detected that doesn't belong to the production network segment. This news sends a shiver down your spine, as you know that such a breach could potentially compromise sensitive information and put the entire project at risk.</p>\n\n\n<h3>Inventory</h3>\n<ul><li><p>VPCs</p></li><li><p>EC2</p></li></ul>\n\n\n\n<h3>Getting Started</h3>\n<p>Anomaly detection mechanisms within the production environment have flagged a concerning observation: a known EC2 instance appears to be communicating with another EC2 instance belonging to the same organization but outside the expected environment. Further investigation is warranted to determine the nature and intent of this communication, and to evaluate any potential security risks posed by these actions.\n\nEmbark on a quest to discover the ultimate VPC feature that can unravel the mystery and enhance the discovery phase!</p>\n\n<h3>Your Task</h3>\n<p>Your primary goal is to use an AWS solution to create an analysis to identify the origin of incoming communication. This will enable you to determine how many findings are associated and where it is coming from.\n\n</p><h3>Task Validation</h3>\n<p>To obtain the answer, you need to identify the AWS solution which can create the analyzer to discover how many findings are associated between the unknown environment with production instance environment.\n\nThe answer need to be the initials of the service name using Capital Letter and the number of findings discovered.\nExample (Initials+Findings): Let's assume you used the VPC Flow Logs service and discovered 50 findings, the answer would be: VFL50.\n\n</p><p>HINT: Don't waste your time, please remember that activating VPC Flow Logs is not allowed for your project. This is because has specific budget constraints and enabling it would incur additional expenses. Find the best service to resolve the task.</p>\n",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "python3.9",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "pathfinder-travel-concierge",
+    "path": "latest.props.tasks[1]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "08c035c6-4e51-452b-be3b-76ee5d6b2155",
+      "taskNumber": 2,
+      "scorePercent": 15,
+      "dependsOnTaskIds": [
+        "4d8c8fb8-b0d1-41df-817b-9e48004db8d9"
+      ],
+      "title": "First Conversation",
+      "content": "## Background &amp; Your Task\n\nPF is alive. The runtime is `READY`. The CEO Slacks: \"Did it work? Can it actually talk?\"\n\nYou realize you have no idea. The runtime status only proves the container booted — it doesn't prove the agent answers traffic. AnyCompany Pathfinder's QA process for any new deployment is a fixed handshake: send a known greeting, capture the welcome code in the reply, and log it against the deployment. If the right code comes back, the agent is wired correctly.\n\nYour job is to be QA. Send the handshake prompt, read the response, and report the welcome code.\n\n## Getting Started\n\nSend a prompt to the runtime you created in Task 1 and read the reply. The AWS Management Console has a built-in way to chat with a runtime without writing any code.\n\nSend this prompt **verbatim** — the agent matches it exactly. Don't paraphrase.\n\n```\nHello AnyCompany Pathfinder, this is my first trip. Please give me the welcome code.\n```\n\nThe agent replies with a short code in the format `PF-TRAVEL-XXXX`. Submit it as your answer.\n\n&gt; **Tip:** If the very first invocation reports *Runtime initialization time exceeded*, wait 10 seconds and try again — Amazon Bedrock AgentCore micro-VMs warm up on first call.\n\n## Inventory\n\n| Resource | Provided | Sidebar key |\n|---|---|---|\n| Amazon Bedrock AgentCore Runtime | The runtime you created in Task 1 | **AgentRuntimeName** |\n\n## Services You Should Use\n\n- **Amazon Bedrock AgentCore (Runtime)** — invoke the agent.\n\n## Task Validation\n\nStatic answer. Submit the welcome code returned by the agent, exactly as shown. Case-sensitive, includes hyphens.\n",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "nodejs24.x",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "pathfinder-travel-concierge",
+    "path": "latest.props.tasks[3]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "acb83169-9919-4500-914c-c30e5b5affde",
+      "taskNumber": 4,
+      "scorePercent": 20,
+      "dependsOnTaskIds": [
+        "67b8c692-2655-4855-b9b4-a997cf91c18d"
+      ],
+      "title": "Preferences Persist",
+      "content": "## Background &amp; Your Task\n\nSaturday afternoon. The memory resource is `ACTIVE` and the agent is configured to use it. But the CEO has been here before — they've seen \"configured\" features fail in demos. Before Monday's launch, you need a clean proof that Pathfinder actually remembers a traveler across sessions, not just inside one conversation.\n\nThe test is simple in theory and unforgiving in practice: tell the concierge a preference in one session, end that session, start a brand-new one with no shared chat history, and ask the concierge to recall the preference. If the **USER_PREFERENCE** strategy is doing its job, the agent recalls it. If memory wasn't wired up correctly in Task 3, the agent has no idea what you're talking about.\n\nYour job is to run that two-session proof — make the agent remember a traveler preference and recall it in a fresh session.\n\n## Getting Started\n\nThis works just like testing the agent in Task 2 — same **Test endpoint** panel on your `pathfinder_concierge` runtime. The only new idea is that you do it **twice, in two separate sessions**. Each time you open **Test endpoint**, AgentCore starts a fresh session with no shared chat history, so opening it a second time is how you prove the agent recalls something from long-term memory rather than from the current conversation.\n\n1. **First session.** Open **Test endpoint** and tell the concierge a clear travel preference in plain English — the kind of seat you like, a meal preference, or a favorite airline. The agent acknowledges it.\n2. **Wait around 60–90 seconds.** The USER_PREFERENCE strategy extracts the preference asynchronously and writes it to long-term memory in Amazon Bedrock AgentCore Memory. The console doesn't show this happening; trust the timer.\n3. **Second session.** Close the Test endpoint panel and open it again (or navigate away and back) to start a brand-new session, then ask the agent to recall what you told it. If memory is wired up correctly, it answers from long-term memory — across the session boundary.\n\nYou don't submit a word for this task. The validator inspects `pathfinder_memory` directly and confirms a preference was extracted and stored. Just make the recall work, then run validation.\n\n&gt; **Tip:** State a real preference and give extraction time before you check progress. If the agent in the second session doesn't recall anything yet, wait a little longer — extraction can take a couple of minutes — then try again.\n\n## Inventory\n\n| Resource | Provided | Sidebar key |\n|---|---|---|\n| Amazon Bedrock AgentCore Runtime | From Task 1 | **AgentRuntimeName** |\n| Amazon Bedrock AgentCore Memory | From Task 3 | **MemoryName** |\n\n## Services You Should Use\n\n- **Amazon Bedrock AgentCore (Runtime)** — chat with the agent in two distinct sessions.\n- **Amazon Bedrock AgentCore (Memory)** — runs in the background; persists turns and retrieves preferences.\n\n## Task Validation\n\nAn AWS Lambda validator inspects `pathfinder_memory` (the value of **MemoryName**) directly. It passes when the memory is `ACTIVE`, has a `USER_PREFERENCE` strategy, and a preference has actually been extracted and stored as a long-term memory record. There is no answer to submit — the validator verifies that cross-session memory genuinely worked, not a word you type.\n\nThe challenge auto-completes once the required task is performed. Alternatively, you can also click the **Check my progress** button to check progress manually.\n",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "nodejs24.x",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "pathfinder-travel-concierge",
+    "path": "latestApproved.props.tasks[1]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "08c035c6-4e51-452b-be3b-76ee5d6b2155",
+      "taskNumber": 2,
+      "scorePercent": 15,
+      "dependsOnTaskIds": [
+        "4d8c8fb8-b0d1-41df-817b-9e48004db8d9"
+      ],
+      "title": "First Conversation",
+      "content": "## Background &amp; Your Task\n\nPF is alive. The runtime is `READY`. The CEO Slacks: \"Did it work? Can it actually talk?\"\n\nYou realize you have no idea. The runtime status only proves the container booted — it doesn't prove the agent answers traffic. AnyCompany Pathfinder's QA process for any new deployment is a fixed handshake: send a known greeting, capture the welcome code in the reply, and log it against the deployment. If the right code comes back, the agent is wired correctly.\n\nYour job is to be QA. Send the handshake prompt, read the response, and report the welcome code.\n\n## Getting Started\n\nSend a prompt to the runtime you created in Task 1 and read the reply. The AWS Management Console has a built-in way to chat with a runtime without writing any code.\n\nSend this prompt **verbatim** — the agent matches it exactly. Don't paraphrase.\n\n```\nHello AnyCompany Pathfinder, this is my first trip. Please give me the welcome code.\n```\n\nThe agent replies with a short code in the format `PF-TRAVEL-XXXX`. Submit it as your answer.\n\n&gt; **Tip:** If the very first invocation reports *Runtime initialization time exceeded*, wait 10 seconds and try again — Amazon Bedrock AgentCore micro-VMs warm up on first call.\n\n## Inventory\n\n| Resource | Provided | Sidebar key |\n|---|---|---|\n| Amazon Bedrock AgentCore Runtime | The runtime you created in Task 1 | **AgentRuntimeName** |\n\n## Services You Should Use\n\n- **Amazon Bedrock AgentCore (Runtime)** — invoke the agent.\n\n## Task Validation\n\nStatic answer. Submit the welcome code returned by the agent, exactly as shown. Case-sensitive, includes hyphens.\n",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "nodejs24.x",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "pathfinder-travel-concierge",
+    "path": "latestApproved.props.tasks[3]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "acb83169-9919-4500-914c-c30e5b5affde",
+      "taskNumber": 4,
+      "scorePercent": 20,
+      "dependsOnTaskIds": [
+        "67b8c692-2655-4855-b9b4-a997cf91c18d"
+      ],
+      "title": "Preferences Persist",
+      "content": "## Background &amp; Your Task\n\nSaturday afternoon. The memory resource is `ACTIVE` and the agent is configured to use it. But the CEO has been here before — they've seen \"configured\" features fail in demos. Before Monday's launch, you need a clean proof that Pathfinder actually remembers a traveler across sessions, not just inside one conversation.\n\nThe test is simple in theory and unforgiving in practice: tell the concierge a preference in one session, end that session, start a brand-new one with no shared chat history, and ask the concierge to recall the preference. If the **USER_PREFERENCE** strategy is doing its job, the agent recalls it. If memory wasn't wired up correctly in Task 3, the agent has no idea what you're talking about.\n\nYour job is to run that two-session proof — make the agent remember a traveler preference and recall it in a fresh session.\n\n## Getting Started\n\nThis works just like testing the agent in Task 2 — same **Test endpoint** panel on your `pathfinder_concierge` runtime. The only new idea is that you do it **twice, in two separate sessions**. Each time you open **Test endpoint**, AgentCore starts a fresh session with no shared chat history, so opening it a second time is how you prove the agent recalls something from long-term memory rather than from the current conversation.\n\n1. **First session.** Open **Test endpoint** and tell the concierge a clear travel preference in plain English — the kind of seat you like, a meal preference, or a favorite airline. The agent acknowledges it.\n2. **Wait around 60–90 seconds.** The USER_PREFERENCE strategy extracts the preference asynchronously and writes it to long-term memory in Amazon Bedrock AgentCore Memory. The console doesn't show this happening; trust the timer.\n3. **Second session.** Close the Test endpoint panel and open it again (or navigate away and back) to start a brand-new session, then ask the agent to recall what you told it. If memory is wired up correctly, it answers from long-term memory — across the session boundary.\n\nYou don't submit a word for this task. The validator inspects `pathfinder_memory` directly and confirms a preference was extracted and stored. Just make the recall work, then run validation.\n\n&gt; **Tip:** State a real preference and give extraction time before you check progress. If the agent in the second session doesn't recall anything yet, wait a little longer — extraction can take a couple of minutes — then try again.\n\n## Inventory\n\n| Resource | Provided | Sidebar key |\n|---|---|---|\n| Amazon Bedrock AgentCore Runtime | From Task 1 | **AgentRuntimeName** |\n| Amazon Bedrock AgentCore Memory | From Task 3 | **MemoryName** |\n\n## Services You Should Use\n\n- **Amazon Bedrock AgentCore (Runtime)** — chat with the agent in two distinct sessions.\n- **Amazon Bedrock AgentCore (Memory)** — runs in the background; persists turns and retrieves preferences.\n\n## Task Validation\n\nAn AWS Lambda validator inspects `pathfinder_memory` (the value of **MemoryName**) directly. It passes when the memory is `ACTIVE`, has a `USER_PREFERENCE` strategy, and a preference has actually been extracted and stored as a long-term memory record. There is no answer to submit — the validator verifies that cross-session memory genuinely worked, not a word you type.\n\nThe challenge auto-completes once the required task is performed. Alternatively, you can also click the **Check my progress** button to check progress manually.\n",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "nodejs24.x",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "strands-agents-golden-pipeline",
+    "path": "latest.props.tasks[0]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "05ba28d1-92c1-4bcf-8dbd-2b7f8248a157",
+      "taskNumber": 1,
+      "scorePercent": 5,
+      "title": "Strands Agents Knowledge Check",
+      "content": "## Background\n\nBefore working with multi-agent AI systems, it's essential to understand the foundational concepts of Strands Agents. This framework enables developers to build sophisticated agentic applications that can collaborate and solve complex problems using large language models. Understanding the core concepts will prepare you for the hands-on challenges ahead.\n\n## Your Task\n\nResearch and answer a knowledge question about Strands Agents by exploring the official documentation. This question tests your understanding of a core Strands Agents concept that you'll need for building multi-agent systems in the upcoming challenges.\n\n**What decorator is used to define any Python function as a tool in the Strands SDK?**\n\n## Inventory\n\nYour AWS account is provisioned with the following:\n\nNA\n\n## Getting Started\n\n1. Navigate to the **Strands Agents documentation** at https://strandsagents.com/\n2. **Explore the framework concepts** and core functionality\n3. **Research tool definitions** and how functions are registered as agent tools\n4. **Take notes** on the decorator patterns used in the framework\n5. **Answer the question** based on your research findings\n\n## Services You Should Use\n\n- **Strands Agents Documentation** (primary research source)\n- **Web Browser** (for documentation access)\n\n## Task Validation\n\nOnce you have researched and found the correct answer, enter your response in the answer field and click **\"Check my progress\"** to complete this knowledge check.",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "nodejs18.x",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "strands-agents-golden-pipeline",
+    "path": "latestApproved.props.tasks[0]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "05ba28d1-92c1-4bcf-8dbd-2b7f8248a157",
+      "taskNumber": 1,
+      "scorePercent": 5,
+      "title": "Strands Agents Knowledge Check",
+      "content": "## Background\n\nBefore working with multi-agent AI systems, it's essential to understand the foundational concepts of Strands Agents. This framework enables developers to build sophisticated agentic applications that can collaborate and solve complex problems using large language models. Understanding the core concepts will prepare you for the hands-on challenges ahead.\n\n## Your Task\n\nResearch and answer a knowledge question about Strands Agents by exploring the official documentation. This question tests your understanding of a core Strands Agents concept that you'll need for building multi-agent systems in the upcoming challenges.\n\n**What decorator is used to define any Python function as a tool in the Strands SDK?**\n\n## Inventory\n\nYour AWS account is provisioned with the following:\n\nNA\n\n## Getting Started\n\n1. Navigate to the **Strands Agents documentation** at https://strandsagents.com/\n2. **Explore the framework concepts** and core functionality\n3. **Research tool definitions** and how functions are registered as agent tools\n4. **Take notes** on the decorator patterns used in the framework\n5. **Answer the question** based on your research findings\n\n## Services You Should Use\n\n- **Strands Agents Documentation** (primary research source)\n- **Web Browser** (for documentation access)\n\n## Task Validation\n\nOnce you have researched and found the correct answer, enter your response in the answer field and click **\"Check my progress\"** to complete this knowledge check.",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "nodejs18.x",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "tag-youre-it",
+    "path": "latest.props.tasks[0]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "9328df91-0e04-40f6-ae24-ae40f78478ab",
+      "taskNumber": 1,
+      "scorePercent": 100,
+      "content": "### Background\nYou are the IAM Administrator for your AWS Accounts. You have two Projects: Blue and Orange that are launching and managing EC2 Instances in the same AWS Account.\n\nYour AWS Account has the following resources:\n* Two IAM Roles:\n  * ProjectBlueRole tagged with Project = Blue\n  * ProjectOrangeRole tagged with Project = Orange\n* Two EC2 Instances:\n  * Blue instance tagged with Project = Blue\n  * Orange instance tagged with Project = Orange\n* A Managed Policy: 'ManageEC2InstancesWithProjectTag' that is attached to the ProjectBlueRole and ProjectOrangeRole. This is overly permissive to start with and does not have any [IAM Conditions](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition.html) for the Actions.\n\n### Requirements\nYour job is to edit this policy document to meet the following three requirements:\n1. Restrict EC2 StartInstances &amp; StopInstances actions to EC2 Instances with Project tag values corresponding to the Roles ProjectOrangeRole and ProjectBlueRole.\n2. Allow EC2 RunInstances only if the EC2 Instances and Volumes are tagged on creation with Project tag values corresponding to the Roles ProjectOrangeRole and ProjectBlueRole. Ensure that the only tag key allowed on creation is 'Project' with an exact case match.\n3. Ensure that tags cannot be changed on EC2 Instances and Volumes after creation.\n\nHint: it may help to save a copy of the original policy document before you make changes so you can always go back and start over.\n\n### Getting Test Results\nAfter saving changes to the Managed Policy wait 20 seconds and browse to or refresh the VerifierUri from the Output Properties. This page displays results of test cases for the above requirements (green means the test passed, red means the test failed). When all tests pass you'll get the Challenge Answer at the bottom of the same page.\n\n### Helpful Links\nHere are a few links to help you with the challenge:\n* [Actions, Resources and Condition Keys for Amazon EC2](https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonec2.html)\n* [AWS Global Condition Context Keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html)\n* [Example IAM Policies for EC2 RunInstances with Tags](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ExamplePolicies_EC2.html#iam-example-runinstances-tags)\n",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunctionRuntime": "nodejs12.x",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "tag-youre-it",
+    "path": "latestApproved.props.tasks[0]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "9328df91-0e04-40f6-ae24-ae40f78478ab",
+      "taskNumber": 1,
+      "scorePercent": 100,
+      "content": "### Background\nYou are the IAM Administrator for your AWS Accounts. You have two Projects: Blue and Orange that are launching and managing EC2 Instances in the same AWS Account.\n\nYour AWS Account has the following resources:\n* Two IAM Roles:\n  * ProjectBlueRole tagged with Project = Blue\n  * ProjectOrangeRole tagged with Project = Orange\n* Two EC2 Instances:\n  * Blue instance tagged with Project = Blue\n  * Orange instance tagged with Project = Orange\n* A Managed Policy: 'ManageEC2InstancesWithProjectTag' that is attached to the ProjectBlueRole and ProjectOrangeRole. This is overly permissive to start with and does not have any [IAM Conditions](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition.html) for the Actions.\n\n### Requirements\nYour job is to edit this policy document to meet the following three requirements:\n1. Restrict EC2 StartInstances &amp; StopInstances actions to EC2 Instances with Project tag values corresponding to the Roles ProjectOrangeRole and ProjectBlueRole.\n2. Allow EC2 RunInstances only if the EC2 Instances and Volumes are tagged on creation with Project tag values corresponding to the Roles ProjectOrangeRole and ProjectBlueRole. Ensure that the only tag key allowed on creation is 'Project' with an exact case match.\n3. Ensure that tags cannot be changed on EC2 Instances and Volumes after creation.\n\nHint: it may help to save a copy of the original policy document before you make changes so you can always go back and start over.\n\n### Getting Test Results\nAfter saving changes to the Managed Policy wait 20 seconds and browse to or refresh the VerifierUri from the Output Properties. This page displays results of test cases for the above requirements (green means the test passed, red means the test failed). When all tests pass you'll get the Challenge Answer at the bottom of the same page.\n\n### Helpful Links\nHere are a few links to help you with the challenge:\n* [Actions, Resources and Condition Keys for Amazon EC2](https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonec2.html)\n* [AWS Global Condition Context Keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html)\n* [Example IAM Policies for EC2 RunInstances with Tags](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ExamplePolicies_EC2.html#iam-example-runinstances-tags)\n",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunctionRuntime": "nodejs12.x",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "the-optimization-quest",
+    "path": "latest.props.tasks[0]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "ee7ec23c-0191-47da-ad7e-46e42c774e84",
+      "taskNumber": 1,
+      "scorePercent": 20,
+      "title": "Find the Resource Hog",
+      "content": "#### Background\n---\nPaulo messages you: *\"I need you to figure out what's causing the CPU spike. The developers insist their web application code is optimized, so something else must be consuming resources. Can you identify which process is maxing out the CPU?\"*\n\n#### Your Task\n---\nConnect to the AnyCompany Ecommerce web application Amazon EC2 instance and identify which process is consuming the most CPU resources. You need to determine the exact process name that is causing the performance bottleneck.\n\n#### Getting Started\n---\n1. [Use Systems Manager - Session Manager to connect to the instance](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/connect-with-systems-manager-session-manager.html) (no SSH key required). Please wait for couple of minutes before attempting to connect to the instance through Session Manager.\n2. The instance name is \"AnyCompany-WebApp-Instance\"\n3. Use Linux system tools to identify CPU-intensive process\n4. The Output Properties tab contains the instance ID\n\n*Note: You may see warning banners in the AWS Console. This is expected behavior due to the implementation of AWS least privilege principle, which ensures you have only the necessary permissions to complete the task.*\n\n#### Inventory\n---\n1. EC2 Instance: AnyCompany-WebApp-Instance\n\n#### Services You Should Use\n----\n1. Amazon EC2\n2. Systems Manager - Session Manager\n3. CloudWatch\n\n#### Task Validation\n----\nThis task uses dynamic answer validation. After identifying the CPU-intensive process, submit the process name in the answer field.\n",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "nodejs20.x",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "the-optimization-quest",
+    "path": "latestApproved.props.tasks[0]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "ee7ec23c-0191-47da-ad7e-46e42c774e84",
+      "taskNumber": 1,
+      "scorePercent": 20,
+      "title": "Find the Resource Hog",
+      "content": "#### Background\n---\nPaulo messages you: *\"I need you to figure out what's causing the CPU spike. The developers insist their web application code is optimized, so something else must be consuming resources. Can you identify which process is maxing out the CPU?\"*\n\n#### Your Task\n---\nConnect to the AnyCompany Ecommerce web application Amazon EC2 instance and identify which process is consuming the most CPU resources. You need to determine the exact process name that is causing the performance bottleneck.\n\n#### Getting Started\n---\n1. [Use Systems Manager - Session Manager to connect to the instance](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/connect-with-systems-manager-session-manager.html) (no SSH key required). Please wait for couple of minutes before attempting to connect to the instance through Session Manager.\n2. The instance name is \"AnyCompany-WebApp-Instance\"\n3. Use Linux system tools to identify CPU-intensive process\n4. The Output Properties tab contains the instance ID\n\n*Note: You may see warning banners in the AWS Console. This is expected behavior due to the implementation of AWS least privilege principle, which ensures you have only the necessary permissions to complete the task.*\n\n#### Inventory\n---\n1. EC2 Instance: AnyCompany-WebApp-Instance\n\n#### Services You Should Use\n----\n1. Amazon EC2\n2. Systems Manager - Session Manager\n3. CloudWatch\n\n#### Task Validation\n----\nThis task uses dynamic answer validation. After identifying the CPU-intensive process, submit the process name in the answer field.\n",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "nodejs20.x",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "the_underwriting_agent",
+    "path": "latest.props.tasks[0]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "e676483a-1120-41d1-a21c-10c8c511e188",
+      "taskNumber": 1,
+      "scorePercent": 40,
+      "title": "Build the Underwriting Agent and Discover the Fraud Gap",
+      "content": "# Background\n\nRegional Mutual Insurance is drowning in applications. The underwriting team processes 500+ applications daily, each one requiring manual risk scoring, policy lookups, and fraud screening. Last quarter, a confirmed fraudster named Robert Thompson slipped through three separate reviews and collected $47,000 in bogus claims because nobody remembered flagging him.\n\nYour team lead just pulled you into a conference call: \"We've got the infrastructure deployed. DynamoDB tables with applicant risk data, an S3 bucket with our underwriting policy manual, and a SageMaker notebook ready to go. But nobody has wired up the actual AI agent yet. The CEO wants a working demo by end of week that can take an applicant ID and produce a full underwriting decision with risk scores, policy citations, and fraud screening. Build it.\"\n\n<br />\n\n# Your Task\n\nYour starter file (`underwriting_agent.py`) comes with three pre-built tools: risk assessment from DynamoDB, fraud screening, and policy lookup from S3. Review how they work, wire up the agent, and test it against a known fraudster to expose the critical flaw in stateless AI.\n\nReference Documentation: [Strands Agents SDK](https://strandsagents.com/)\n\n<br />\n\n# Getting Started\n\n## Step 1: Open the SageMaker Notebook\n\n1. In the AWS console, navigate to **Amazon SageMaker AI** &gt; **Notebooks** &gt; **Notebook instances**.\n\n2. Find the notebook instance named `underwriting-agent-notebook` and click **Open JupyterLab**.\n\n3. Open the file `underwriting_agent.py` from the file browser. This is your starter file with pre-built tools, a system prompt, and agent setup code.\n\n<br />\n\n## Step 2: Review the Pre-Built Tools\n\nThe starter file comes with three fully implemented `@tool` functions. Before running the agent, take a few minutes to read through each one and understand what it does.\n\n<br />\n\n### Tool 1: `risk_assessment`\n\nThis tool reads an applicant's record from the `ApplicantRiskData` DynamoDB table and calculates a composite risk score (0-100). It starts at a baseline of 50 and adds points for risk factors like age, smoking, BMI, credit score, driving record, prior claims, and health conditions. The final score maps to a category: LOW, MEDIUM, HIGH, or VERY_HIGH.\n\n<br />\n\n### Tool 2: `fraud_check`\n\nThis tool is intentionally a stateless placeholder. It always returns `NONE_DETECTED` with no fraud flags, regardless of who the applicant is. There is no database lookup, no memory of past sessions, and no way to know if someone was previously flagged. You will upgrade this in Task 2 by adding persistent fraud detection with DynamoDB.\n\n<br />\n\n### Tool 3: `policy_lookup`\n\nThis tool reads the full underwriting policy manual from S3 (`underwriting-policy-manual.txt`). The agent uses this to cite specific policy sections when making underwriting decisions. Pay attention to Section 4.3 (Known Fraud Handling), which says confirmed fraud flags must result in automatic decline.\n\n<br />\n\n## Step 3: Create and Test the Agent\n\n1. In `underwriting_agent.py`, scroll to the \"Agent Creation and Local Testing\" section near the bottom.\n\n2. Uncomment the entire block, including the `if __name__` guard:\n\n   ```python\n   if __name__ == \"__main__\":\n       agent = Agent(\n           model=MODEL_ID,\n           tools=[risk_assessment, fraud_check, policy_lookup],\n           system_prompt=SYSTEM_PROMPT,\n       )\n\n       response = agent(\"Evaluate insurance application for applicant APP-1001\")\n       print(response)\n   ```\n\n3. Open a terminal in JupyterLab: click **File &gt; New &gt; Terminal**.\n\n4. Activate the conda environment and run the agent:\n\n   ```bash\n   source activate python3\n   cd ~/SageMaker\n   python underwriting_agent.py\n   ```\n\n5. Verify the agent calls all three tools and produces a structured decision with policy section citations.\n\nTry different applicants by changing the applicant ID in the test line:\n- **APP-1001** (Sarah Chen): Low risk, should be approved\n- **APP-1002** (Marcus Rivera): Medium risk with health conditions, should be referred\n- **APP-1003** (James Mitchell): High risk, smoker, bad credit, should be declined or referred\n- **APP-1004** (Elena Vasquez): Low risk physician, should be approved\n- **APP-1005** (David Park): Senior with heart disease, should be referred\n\n<br />\n\n## Step 4: Expose the Fraud Gap\n\nNow test the agent against a known fraudster.\n\n1. In `underwriting_agent.py`, change the test line inside the `if __name__` block to evaluate Robert Thompson:\n\n   ```python\n   if __name__ == \"__main__\":\n       agent = Agent(\n           model=MODEL_ID,\n           tools=[risk_assessment, fraud_check, policy_lookup],\n           system_prompt=SYSTEM_PROMPT,\n       )\n\n       response = agent(\"Evaluate insurance application for applicant APP-2001\")\n       print(response)\n   ```\n\n   &gt; **Important:** Make sure this is the only evaluation in the block. Comment out or remove any previous test lines (like APP-1001). Running multiple evaluations in the same session can cause the model to carry context between them.\n\n2. Run `python underwriting_agent.py` again. Review the output carefully:\n   - The `fraud_check` tool returns **no fraud flags** and `NONE_DETECTED`\n   - The agent approves or conditionally approves Thompson based on his clean risk profile (score 55, MEDIUM)\n   - But Robert Thompson is a known fraudster who should be automatically declined per Section 4.3\n\n3. Think about why this happened. The `fraud_check` tool is stateless. It has no database of fraud flags, no memory of past sessions, and no way to know that Thompson was flagged 6 months ago. Even if you told the agent about the fraud in a previous run, the next time you run the script the agent starts completely fresh.\n\nThis is the critical gap: a stateless agent cannot enforce fraud detection policy because it forgets everything between sessions. You'll fix this in Task 2 by adding persistent fraud detection with a DynamoDB fraud flags table.\n\n<br />\n\n# Inventory\n\n- `underwriting-agent-notebook` SageMaker notebook: Your development environment\n- `underwriting_agent.py`: Starter file with pre-built tool functions, system prompt, and agent setup\n- `ApplicantRiskData` DynamoDB table: Pre-seeded with 6 applicant profiles (APP-1001 through APP-2001)\n- `ClaimsHistory` DynamoDB table: Pre-seeded with claims data\n- `underwriting-policy-docs-{AccountId}` S3 bucket: Contains `underwriting-policy-manual.txt`\n- Amazon Nova Pro model: Recommended foundation model (referenced via the `MODEL_ID` constant, which auto-selects the US or EU cross-region inference profile)\n- APP-2001 (Robert Thompson): Known fraudster with a clean risk profile, age 38, no health conditions, credit score 710, 1 prior claim. Expected risk score: 55\n\n<br />\n\n# Services You Should Use\n\n- Amazon SageMaker (Notebook)\n- Amazon Bedrock (Foundation Models)\n- Amazon DynamoDB\n- Amazon S3\n\n<br />\n\n# Task Validation\n\nAfter running the agent against APP-2001 (Robert Thompson), look at the risk assessment output.\n\n**Question: What is Robert Thompson's risk score?**\n\nEnter the number in the answer box and click **Check My Progress** under Task 1 in the JAM console.\n",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "python3.12",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "the_underwriting_agent",
+    "path": "latest.props.tasks[3]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "daf636c7-c98b-4fe2-8b9c-a333c0665576",
+      "taskNumber": 4,
+      "scorePercent": 10,
+      "dependsOnTaskIds": [
+        "e676483a-1120-41d1-a21c-10c8c511e188",
+        "8cdc8a8e-95d6-4d9c-9bb5-311df3d921cb",
+        "957f813a-9eb7-4a31-bbd8-98b922797a43"
+      ],
+      "title": "Deploy as an API Server and Launch the Chat UI",
+      "content": "# Background\n\nYour agent now has four tools: risk assessment, fraud checking, policy lookup, and claims velocity detection. It's time to make it accessible to the underwriting team. You'll wrap the agent in a Flask API server and connect it to a Streamlit chat interface so underwriters can interact with it through a web UI.\n\n&lt;br /&gt;\n\n# Your Task\n\nDeploy your agent as a Flask API server and launch the pre-built Streamlit chat UI to connect to it.\n\n&lt;br /&gt;\n\n# Getting Started\n\n## Step 1: Add the Flask API Wrapper\n\n1. In JupyterLab, open `underwriting_agent.py` from the file browser.\n\n2. Scroll to the bottom of the file and find the \"Flask API Server (Task 4)\" section.\n\n3. Comment out or delete the old local testing `if __name__` block.\n\n4. Uncomment the Flask API section. If you built the `claims_history` tool in Task 3, add it to the tools list:\n\n   ```python\n   from flask import Flask, request, jsonify\n   app = Flask(__name__)\n\n   @app.route(\"/invoke\", methods=[\"POST\"])\n   def invoke():\n       data = request.get_json()\n       prompt = data.get(\"prompt\", \"\")\n       agent = Agent(\n           model=MODEL_ID,\n           tools=[risk_assessment, fraud_check, policy_lookup, claims_history],\n           system_prompt=SYSTEM_PROMPT,\n       )\n       response = agent(prompt)\n       return jsonify({\"response\": str(response)})\n\n   @app.route(\"/health\", methods=[\"GET\"])\n   def health():\n       return jsonify({\"status\": \"healthy\"})\n\n   if __name__ == \"__main__\":\n       app.run(host=\"0.0.0.0\", port=8080)\n   ```\n\n5. Save the file.\n\n&lt;br /&gt;\n\n## Step 2: Start the Agent Server\n\n1. Open a terminal in JupyterLab: click **File &gt; New &gt; Terminal**.\n\n2. Activate the conda environment and start the server:\n\n   ```bash\n   source activate python3\n   cd ~/SageMaker\n   python underwriting_agent.py\n   ```\n\n   You should see output like:\n\n   ```\n    * Running on all addresses (0.0.0.0)\n    * Running on http://127.0.0.1:8080\n   ```\n\n   Leave this terminal running.\n\n&lt;br /&gt;\n\n## Step 3: Test the API\n\n1. Open a **second** terminal in JupyterLab: click **File &gt; New &gt; Terminal**.\n\n2. Test the health endpoint:\n\n   ```bash\n   curl http://localhost:8080/health\n   ```\n\n   You should see: `{\"status\":\"healthy\"}`\n\n3. Test an underwriting evaluation:\n\n   ```bash\n   source activate python3\n   curl -X POST http://localhost:8080/invoke \\\n     -H \"Content-Type: application/json\" \\\n     -d '{\"prompt\": \"Evaluate insurance application for applicant APP-1001\"}'\n   ```\n\n&lt;br /&gt;\n\n## Step 4: Launch the Streamlit Chat UI\n\n1. In the same second terminal, start the Streamlit app:\n\n   ```bash\n   cd ~/SageMaker\n   streamlit run app.py --server.port 8501 --server.headless true\n   ```\n\n   Leave this terminal running too. You now have two processes: the Flask API server and the Streamlit UI.\n\n2. To access the Streamlit UI from your browser, use the SageMaker notebook's proxy URL:\n\n   ```\n   https://{notebook-instance-name}.notebook.{region}.sagemaker.aws/proxy/8501/\n   ```\n\n   Replace `{notebook-instance-name}` with `underwriting-agent-notebook` and `{region}` with your AWS region.\n\n3. The sidebar shows the Agent API URL pre-filled as `http://localhost:8080/invoke`. This should work without changes.\n\n4. Try chatting with the agent:\n   - \"Evaluate insurance application for applicant APP-1001\"\n   - \"Evaluate insurance application for applicant APP-1003\"\n   - \"Evaluate insurance application for applicant APP-2001\"\n   - \"What are the automatic decline triggers in the underwriting policy?\"\n\n5. Verify that the agent responds with structured underwriting decisions, including risk scores, policy citations, fraud screening results, and claims velocity analysis.\n\n&lt;br /&gt;\n\n# Inventory\n\n- `underwriting_agent.py`: Your agent file with the Flask API section ready to uncomment\n- `app.py`: Pre-built Streamlit chat UI (already in your notebook files)\n- `requirements.txt`: Python dependencies file (includes Flask and requests)\n- Health endpoint: `GET /health` returns `{\"status\": \"healthy\"}`\n- Invoke endpoint: `POST /invoke` accepts `{\"prompt\": \"...\"}` and returns `{\"response\": \"...\"}`\n- SageMaker proxy URL: `https://underwriting-agent-notebook.notebook.{region}.sagemaker.aws/proxy/8501/`\n\n&lt;br /&gt;\n\n# Services You Should Use\n\n- Amazon SageMaker (Notebook)\n- Amazon Bedrock (Foundation Models)\n\n&lt;br /&gt;\n\n# Task Validation\n\nAfter launching the Streamlit app, look at the bottom of the sidebar for a validation code.\n\n**Question: What is the validation code shown in the Streamlit sidebar?**\n\nEnter the code in the answer box and click **Check My Progress** under Task 4 in the JAM console.\n",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "python3.12",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "the_underwriting_agent",
+    "path": "latestApproved.props.tasks[0]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "e676483a-1120-41d1-a21c-10c8c511e188",
+      "taskNumber": 1,
+      "scorePercent": 40,
+      "title": "Build the Underwriting Agent and Discover the Fraud Gap",
+      "content": "# Background\n\nRegional Mutual Insurance is drowning in applications. The underwriting team processes 500+ applications daily, each one requiring manual risk scoring, policy lookups, and fraud screening. Last quarter, a confirmed fraudster named Robert Thompson slipped through three separate reviews and collected $47,000 in bogus claims because nobody remembered flagging him.\n\nYour team lead just pulled you into a conference call: \"We've got the infrastructure deployed. DynamoDB tables with applicant risk data, an S3 bucket with our underwriting policy manual, and a SageMaker notebook ready to go. But nobody has wired up the actual AI agent yet. The CEO wants a working demo by end of week that can take an applicant ID and produce a full underwriting decision with risk scores, policy citations, and fraud screening. Build it.\"\n\n<br />\n\n# Your Task\n\nYour starter file (`underwriting_agent.py`) comes with three pre-built tools: risk assessment from DynamoDB, fraud screening, and policy lookup from S3. Review how they work, wire up the agent, and test it against a known fraudster to expose the critical flaw in stateless AI.\n\nReference Documentation: [Strands Agents SDK](https://strandsagents.com/)\n\n<br />\n\n# Getting Started\n\n## Step 1: Open the SageMaker Notebook\n\n1. In the AWS console, navigate to **Amazon SageMaker AI** &gt; **Notebooks** &gt; **Notebook instances**.\n\n2. Find the notebook instance named `underwriting-agent-notebook` and click **Open JupyterLab**.\n\n3. Open the file `underwriting_agent.py` from the file browser. This is your starter file with pre-built tools, a system prompt, and agent setup code.\n\n<br />\n\n## Step 2: Review the Pre-Built Tools\n\nThe starter file comes with three fully implemented `@tool` functions. Before running the agent, take a few minutes to read through each one and understand what it does.\n\n<br />\n\n### Tool 1: `risk_assessment`\n\nThis tool reads an applicant's record from the `ApplicantRiskData` DynamoDB table and calculates a composite risk score (0-100). It starts at a baseline of 50 and adds points for risk factors like age, smoking, BMI, credit score, driving record, prior claims, and health conditions. The final score maps to a category: LOW, MEDIUM, HIGH, or VERY_HIGH.\n\n<br />\n\n### Tool 2: `fraud_check`\n\nThis tool is intentionally a stateless placeholder. It always returns `NONE_DETECTED` with no fraud flags, regardless of who the applicant is. There is no database lookup, no memory of past sessions, and no way to know if someone was previously flagged. You will upgrade this in Task 2 by adding persistent fraud detection with DynamoDB.\n\n<br />\n\n### Tool 3: `policy_lookup`\n\nThis tool reads the full underwriting policy manual from S3 (`underwriting-policy-manual.txt`). The agent uses this to cite specific policy sections when making underwriting decisions. Pay attention to Section 4.3 (Known Fraud Handling), which says confirmed fraud flags must result in automatic decline.\n\n<br />\n\n## Step 3: Create and Test the Agent\n\n1. In `underwriting_agent.py`, scroll to the \"Agent Creation and Local Testing\" section near the bottom.\n\n2. Uncomment the entire block, including the `if __name__` guard:\n\n   ```python\n   if __name__ == \"__main__\":\n       agent = Agent(\n           model=MODEL_ID,\n           tools=[risk_assessment, fraud_check, policy_lookup],\n           system_prompt=SYSTEM_PROMPT,\n       )\n\n       response = agent(\"Evaluate insurance application for applicant APP-1001\")\n       print(response)\n   ```\n\n3. Open a terminal in JupyterLab: click **File &gt; New &gt; Terminal**.\n\n4. Activate the conda environment and run the agent:\n\n   ```bash\n   source activate python3\n   cd ~/SageMaker\n   python underwriting_agent.py\n   ```\n\n5. Verify the agent calls all three tools and produces a structured decision with policy section citations.\n\nTry different applicants by changing the applicant ID in the test line:\n- **APP-1001** (Sarah Chen): Low risk, should be approved\n- **APP-1002** (Marcus Rivera): Medium risk with health conditions, should be referred\n- **APP-1003** (James Mitchell): High risk, smoker, bad credit, should be declined or referred\n- **APP-1004** (Elena Vasquez): Low risk physician, should be approved\n- **APP-1005** (David Park): Senior with heart disease, should be referred\n\n<br />\n\n## Step 4: Expose the Fraud Gap\n\nNow test the agent against a known fraudster.\n\n1. In `underwriting_agent.py`, change the test line inside the `if __name__` block to evaluate Robert Thompson:\n\n   ```python\n   if __name__ == \"__main__\":\n       agent = Agent(\n           model=MODEL_ID,\n           tools=[risk_assessment, fraud_check, policy_lookup],\n           system_prompt=SYSTEM_PROMPT,\n       )\n\n       response = agent(\"Evaluate insurance application for applicant APP-2001\")\n       print(response)\n   ```\n\n   &gt; **Important:** Make sure this is the only evaluation in the block. Comment out or remove any previous test lines (like APP-1001). Running multiple evaluations in the same session can cause the model to carry context between them.\n\n2. Run `python underwriting_agent.py` again. Review the output carefully:\n   - The `fraud_check` tool returns **no fraud flags** and `NONE_DETECTED`\n   - The agent approves or conditionally approves Thompson based on his clean risk profile (score 55, MEDIUM)\n   - But Robert Thompson is a known fraudster who should be automatically declined per Section 4.3\n\n3. Think about why this happened. The `fraud_check` tool is stateless. It has no database of fraud flags, no memory of past sessions, and no way to know that Thompson was flagged 6 months ago. Even if you told the agent about the fraud in a previous run, the next time you run the script the agent starts completely fresh.\n\nThis is the critical gap: a stateless agent cannot enforce fraud detection policy because it forgets everything between sessions. You'll fix this in Task 2 by adding persistent fraud detection with a DynamoDB fraud flags table.\n\n<br />\n\n# Inventory\n\n- `underwriting-agent-notebook` SageMaker notebook: Your development environment\n- `underwriting_agent.py`: Starter file with pre-built tool functions, system prompt, and agent setup\n- `ApplicantRiskData` DynamoDB table: Pre-seeded with 6 applicant profiles (APP-1001 through APP-2001)\n- `ClaimsHistory` DynamoDB table: Pre-seeded with claims data\n- `underwriting-policy-docs-{AccountId}` S3 bucket: Contains `underwriting-policy-manual.txt`\n- Amazon Nova Pro model: Recommended foundation model (referenced via the `MODEL_ID` constant, which auto-selects the US or EU cross-region inference profile)\n- APP-2001 (Robert Thompson): Known fraudster with a clean risk profile, age 38, no health conditions, credit score 710, 1 prior claim. Expected risk score: 55\n\n<br />\n\n# Services You Should Use\n\n- Amazon SageMaker (Notebook)\n- Amazon Bedrock (Foundation Models)\n- Amazon DynamoDB\n- Amazon S3\n\n<br />\n\n# Task Validation\n\nAfter running the agent against APP-2001 (Robert Thompson), look at the risk assessment output.\n\n**Question: What is Robert Thompson's risk score?**\n\nEnter the number in the answer box and click **Check My Progress** under Task 1 in the JAM console.\n",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "python3.12",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "the_underwriting_agent",
+    "path": "latestApproved.props.tasks[3]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "daf636c7-c98b-4fe2-8b9c-a333c0665576",
+      "taskNumber": 4,
+      "scorePercent": 10,
+      "dependsOnTaskIds": [
+        "e676483a-1120-41d1-a21c-10c8c511e188",
+        "8cdc8a8e-95d6-4d9c-9bb5-311df3d921cb",
+        "957f813a-9eb7-4a31-bbd8-98b922797a43"
+      ],
+      "title": "Deploy as an API Server and Launch the Chat UI",
+      "content": "# Background\n\nYour agent now has four tools: risk assessment, fraud checking, policy lookup, and claims velocity detection. It's time to make it accessible to the underwriting team. You'll wrap the agent in a Flask API server and connect it to a Streamlit chat interface so underwriters can interact with it through a web UI.\n\n&lt;br /&gt;\n\n# Your Task\n\nDeploy your agent as a Flask API server and launch the pre-built Streamlit chat UI to connect to it.\n\n&lt;br /&gt;\n\n# Getting Started\n\n## Step 1: Add the Flask API Wrapper\n\n1. In JupyterLab, open `underwriting_agent.py` from the file browser.\n\n2. Scroll to the bottom of the file and find the \"Flask API Server (Task 4)\" section.\n\n3. Comment out or delete the old local testing `if __name__` block.\n\n4. Uncomment the Flask API section. If you built the `claims_history` tool in Task 3, add it to the tools list:\n\n   ```python\n   from flask import Flask, request, jsonify\n   app = Flask(__name__)\n\n   @app.route(\"/invoke\", methods=[\"POST\"])\n   def invoke():\n       data = request.get_json()\n       prompt = data.get(\"prompt\", \"\")\n       agent = Agent(\n           model=MODEL_ID,\n           tools=[risk_assessment, fraud_check, policy_lookup, claims_history],\n           system_prompt=SYSTEM_PROMPT,\n       )\n       response = agent(prompt)\n       return jsonify({\"response\": str(response)})\n\n   @app.route(\"/health\", methods=[\"GET\"])\n   def health():\n       return jsonify({\"status\": \"healthy\"})\n\n   if __name__ == \"__main__\":\n       app.run(host=\"0.0.0.0\", port=8080)\n   ```\n\n5. Save the file.\n\n&lt;br /&gt;\n\n## Step 2: Start the Agent Server\n\n1. Open a terminal in JupyterLab: click **File &gt; New &gt; Terminal**.\n\n2. Activate the conda environment and start the server:\n\n   ```bash\n   source activate python3\n   cd ~/SageMaker\n   python underwriting_agent.py\n   ```\n\n   You should see output like:\n\n   ```\n    * Running on all addresses (0.0.0.0)\n    * Running on http://127.0.0.1:8080\n   ```\n\n   Leave this terminal running.\n\n&lt;br /&gt;\n\n## Step 3: Test the API\n\n1. Open a **second** terminal in JupyterLab: click **File &gt; New &gt; Terminal**.\n\n2. Test the health endpoint:\n\n   ```bash\n   curl http://localhost:8080/health\n   ```\n\n   You should see: `{\"status\":\"healthy\"}`\n\n3. Test an underwriting evaluation:\n\n   ```bash\n   source activate python3\n   curl -X POST http://localhost:8080/invoke \\\n     -H \"Content-Type: application/json\" \\\n     -d '{\"prompt\": \"Evaluate insurance application for applicant APP-1001\"}'\n   ```\n\n&lt;br /&gt;\n\n## Step 4: Launch the Streamlit Chat UI\n\n1. In the same second terminal, start the Streamlit app:\n\n   ```bash\n   cd ~/SageMaker\n   streamlit run app.py --server.port 8501 --server.headless true\n   ```\n\n   Leave this terminal running too. You now have two processes: the Flask API server and the Streamlit UI.\n\n2. To access the Streamlit UI from your browser, use the SageMaker notebook's proxy URL:\n\n   ```\n   https://{notebook-instance-name}.notebook.{region}.sagemaker.aws/proxy/8501/\n   ```\n\n   Replace `{notebook-instance-name}` with `underwriting-agent-notebook` and `{region}` with your AWS region.\n\n3. The sidebar shows the Agent API URL pre-filled as `http://localhost:8080/invoke`. This should work without changes.\n\n4. Try chatting with the agent:\n   - \"Evaluate insurance application for applicant APP-1001\"\n   - \"Evaluate insurance application for applicant APP-1003\"\n   - \"Evaluate insurance application for applicant APP-2001\"\n   - \"What are the automatic decline triggers in the underwriting policy?\"\n\n5. Verify that the agent responds with structured underwriting decisions, including risk scores, policy citations, fraud screening results, and claims velocity analysis.\n\n&lt;br /&gt;\n\n# Inventory\n\n- `underwriting_agent.py`: Your agent file with the Flask API section ready to uncomment\n- `app.py`: Pre-built Streamlit chat UI (already in your notebook files)\n- `requirements.txt`: Python dependencies file (includes Flask and requests)\n- Health endpoint: `GET /health` returns `{\"status\": \"healthy\"}`\n- Invoke endpoint: `POST /invoke` accepts `{\"prompt\": \"...\"}` and returns `{\"response\": \"...\"}`\n- SageMaker proxy URL: `https://underwriting-agent-notebook.notebook.{region}.sagemaker.aws/proxy/8501/`\n\n&lt;br /&gt;\n\n# Services You Should Use\n\n- Amazon SageMaker (Notebook)\n- Amazon Bedrock (Foundation Models)\n\n&lt;br /&gt;\n\n# Task Validation\n\nAfter launching the Streamlit app, look at the bottom of the sidebar for a validation code.\n\n**Question: What is the validation code shown in the Streamlit sidebar?**\n\nEnter the code in the answer box and click **Check My Progress** under Task 4 in the JAM console.\n",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunction": "REDACTED",
+      "validationFunctionRuntime": "python3.12",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "xray-serverless",
+    "path": "latest.props.tasks[0]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "2a4c0523-2ace-4766-be30-164a74105f7f",
+      "taskNumber": 1,
+      "scorePercent": 100,
+      "content": "# Summary<br />\nThe REST Sales API has been created in API Gateway with one method to retrieve the top 10 sales of your company in 2017. The first version of the API has already been deployed by the creation of the \"v1\" Deployment Stage. \n<br /><br />The API calls a Lambda function developed in Python 3.9 with the business logic to query a database table and prepare the response to the user. With the intent of applying architecture best practices, the developer created some versions, an alias, and layers for the function. \n<br /><br />All sales data is in a DynamoDB table. \n<br /><br />Open a Web Browser and visit the Sales URL created by the API Gateway to test the application. Currently, it is returning a 5XX status, but the error message is not always the same.\n<br /><br />In order to investigate the problems, it's important to have the appropriate tools to troubleshoot and understand the end-to-end flow of the application. \n# Solving this Challenge\nTo complete this challenge, you will have to first enable X-Ray in all layers of the application to understand the flow and identify bottlenecks. CloudWatch is also available to display error details added in the logs.\n<br /><br />After you detect the problems, you will be able to fix the issues in the API Gateway, Lambda and DynamoDB services via AWS Console. \n# Important Parameters\nTake note of the following information in Output Properties: \n<br />- *SalesAPIURL*: URL of the API which returns the top 10 sales of 2017\n<br />- *ValidateAPIURL*: URL of the API which generates a hash for the answer\n# How do I know that I've solved this challenge? \nThe answer of this challenge will be the hash generated by the /validate API. Open a Web Browser and visit this URL and paste the hash as the answer.\n<br />To generate a valid hash, the /sales must return at least the top 3 sales in less than one second!\n<br /><br />**Good luck!**",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunctionRuntime": "nodejs12.x",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  },
+  {
+    "challengeId": "xray-serverless",
+    "path": "latestApproved.props.tasks[0]",
+    "validationType": "GLOBAL_STATIC_ANSWER",
+    "task": {
+      "id": "2a4c0523-2ace-4766-be30-164a74105f7f",
+      "taskNumber": 1,
+      "scorePercent": 100,
+      "content": "# Summary<br />\nThe REST Sales API has been created in API Gateway with one method to retrieve the top 10 sales of your company in 2017. The first version of the API has already been deployed by the creation of the \"v1\" Deployment Stage. \n<br /><br />The API calls a Lambda function developed in Python 3.9 with the business logic to query a database table and prepare the response to the user. With the intent of applying architecture best practices, the developer created some versions, an alias, and layers for the function. \n<br /><br />All sales data is in a DynamoDB table. \n<br /><br />Open a Web Browser and visit the Sales URL created by the API Gateway to test the application. Currently, it is returning a 5XX status, but the error message is not always the same.\n<br /><br />In order to investigate the problems, it's important to have the appropriate tools to troubleshoot and understand the end-to-end flow of the application. \n# Solving this Challenge\nTo complete this challenge, you will have to first enable X-Ray in all layers of the application to understand the flow and identify bottlenecks. CloudWatch is also available to display error details added in the logs.\n<br /><br />After you detect the problems, you will be able to fix the issues in the API Gateway, Lambda and DynamoDB services via AWS Console. \n# Important Parameters\nTake note of the following information in Output Properties: \n<br />- *SalesAPIURL*: URL of the API which returns the top 10 sales of 2017\n<br />- *ValidateAPIURL*: URL of the API which generates a hash for the answer\n# How do I know that I've solved this challenge? \nThe answer of this challenge will be the hash generated by the /validate API. Open a Web Browser and visit this URL and paste the hash as the answer.\n<br />To generate a valid hash, the /sales must return at least the top 3 sales in less than one second!\n<br /><br />**Good luck!**",
+      "validationType": "GLOBAL_STATIC_ANSWER",
+      "validationFunctionRuntime": "nodejs12.x",
+      "globalStaticAnswer": "REDACTED",
+      "variableScoringEnabled": false,
+      "allowInputAnswer": true,
+      "validatedByLambda": false
+    }
+  }
+]

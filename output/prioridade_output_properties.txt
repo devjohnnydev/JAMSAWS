@@ -1,0 +1,571 @@
+====================================================================================================
+AWS JAM - TASKS PRIORITÁRIAS: OUTPUT PROPERTIES
+====================================================================================================
+
+Tasks encontradas: 12
+
+====================================================================================================
+[01] DEVOPS1 | TASK 1
+====================================================================================================
+
+TÍTULO: Let's isolate the Staging and Production Environments !!
+VALIDAÇÃO: GLOBAL_STATIC_ANSWER
+INPUT ANSWER: True
+
+CONTEÚDO COMPLETO
+--------------------------------------------------------------------------------
+<h3>Summary</h3>
+<p>
+  Your organization has recently decided to adopt serverless architectures to build its next generation of service APIs.
+  The development teams have been using AWS API Gateway and AWS Lambda to build powerful APIs to their customers.
+  However, developers have been using a single environment to build and test the APIs and now need your help to build
+  fully isolated environments for testing (staging) and production purposes. They know it is important to separate these
+  environments so that they can continue to improve the APIs without affecting customers using a stable version
+  of the APIs in production.
+</p>
+<p>
+  You were tasked to create a blue/green deployment model that could serve as basis for deploying the various service APIs
+  currently being developed within your organization. The blue/green model must enforce the full isolation
+  of the "staging" (green) and the "production" (blue) environments.
+</p>
+<p>
+  You have no time to waste! So, you started by creating a very simple API called <i>Greeting API</i>
+  that will help you build and test your model. Then, you created two API Gateway stages (staging and prod),
+  a Lambda function (GreetingLambda) that implements the API logic, and two Lambda aliases (staging and prod).
+  Your plan is to have the "staging" API endpoint resolve to the "staging" Lambda alias and the "prod" API stage
+  resolve to the "prod" Lambda alias. This way new changes made to the Lambda code can be deployed to the
+  "staging" alias first and be visible only from the "staging" API endpoint.
+  When you're ready to push the changes to production you can simply update the "prod" Lambda alias to
+  point to the same Lambda version referenced by the "staging" alias.
+  Things look great and you're confident that you have all the pieces in place (ie, two API stages and two Lambda aliases).
+</p>
+<p>
+  But, wait... When you hit the production and staging API endpoints from your
+  web browser you always get the same results back even if new changes were deployed only to the staging environment.
+  Hmmm, that's intriguing... You now have to dive deep and figure out what configuration is missing to fully isolate
+  the production and staging environments.
+</p>
+
+<h3>Important Parameters</h3>
+<p>
+  Take note of the following stack outputs (under Output Properties):
+</p>
+<p>
+</p><ul><li><b>APIStagingStageGreetingURL</b>: URL of the staging (Green) API environment</li><li><b>APIProdStageGreetingURL</b>: URL of the production (Blue) API environment</li><li><b>CheckChallengeAnswerURL</b>: URL that will give the answer to this challenge once you solve it</li></ul>
+
+
+<h3>Solving this Challenge</h3>
+<p>
+  First things first... So, let's start troubleshooting the problem. Your first goal will be to make a small change
+  to the Lambda code and deploy it as a new version into the "staging" environment only. Follow the steps below.
+</p>
+
+<p>
+  <b>Step #1</b>: Make a small change to the Lambda function code
+</p>
+<p>
+  Open the AWS Lambda Console and click on your Lambda function: <i>GreetingLambda</i>.
+  You should now see the Lambda editor. Use the editor to replace the greeting string from
+  "Hello" to "Hi", in the source code. Hit "Deploy", wait for the deployment to complete then hit Test" 
+  to test your Lambda changes. The console might ask you to create
+  a test event. If so, use the "Hello World" test event as a reference. Enter an event name
+  (eg, "GreetingTestEvent") and in the event template type this JSON input: {"name": "awsstudent"} (delete the
+  default event template: {"key3": "value3", ...}). Hit "Create" to create the test event.
+  Click on "Test" to run the Lambda function. Now, expand the "Execution result" panel by clicking on "details"
+  to see the output logs of the Lambda execution. Did you notice that now the function greets you with
+  {"greeting": "Hi, awsstudent!"}?
+</p>
+
+<p>
+  Now that you have made a change to the Lambda code you will deploy it into the "staging" environment. This is
+  accomplished by publishing a new version of the Lambda code and updating the "staging" alias to point to that
+  new version. Follow step #2 below.
+</p>
+
+<p>
+  <b>Step #2</b>: Publish a new version of the Lambda function code and deploy it to the "staging" environment.
+</p>
+<p>
+  Still on the Lambda Console, click on "Versions" and then "Publish new version". Use a simple version description
+  like "version 2".
+  Note that you are only able to publish a new version of the Lambda function because you have changed the Lambda code.
+  If you go back to the Lambda function main screen and click on "Versions" you should be
+  able to see multiple versions of your Lambda function now.
+  You will also notice that the two Lambda aliases (<i>staging</i> and <i>prod</i>) refer to version 1.
+  Let's update the <i>staging</i> alias to point to version 2, the version that contains the code changes you 
+  made in the previous step.
+  Back in the Lambda function main screen, click on "Aliases". Select the <i>staging</i> alias by clicking on the 
+  corresponding radio button then hit the "Edit" button.
+  Update the Lambda version in the <i>staging</i> alias to version 2 and hit "Save".
+  Now click on the alias name (should be a clickable link) and hit "Test" to run the Lambda function.
+  Expand the Lambda execution logs panel again by hitting "Execution results", at the top of the page, and then "details".
+  Did you notice that now the <i>staging</i> alias returns {"greeting": "Hi, awsstudent!"}?
+  Now do the same procedure but selecting the <i>prod</i> alias and notice
+  that the output produced is different: {"greeting": "Hello, awsstudent!"}, as expected!
+  That's great. This means that your changes only affected the <i>staging</i> environment.
+</p>
+
+<p>
+   So, the Lambda aliases are working just fine and you are able to deploy changes to the "staging" alias
+   without affecting the "prod" alias. Your next step will be to troubleshoot the API Gateway configuration.
+</p>
+
+<p><b>Step #3</b>: Troubleshoot the API Gateway configuration.</p>
+
+<p>
+  Open your web browser, hit the <i>staging</i> and <i>production</i> API endpoints again (find the URLs from Output Properties 
+  <i>APIStagingStageGreetingURL</i> and <i>APIProdStageGreetingURL</i>). What do you see? Both endpoints
+  return {"greeting": "Hi, awsstudent!"}? But, why? Why do both endpoints now return "Hi" if you only updated the
+  "staging" Lambda alias in steps #1 and #2?
+</p>
+
+<p>
+  Since you have tested your Lambda aliases and they are working just fine the issue must be an API Gateway
+  misconfiguration. Congrats, you have narrow down the issue. Most of your troubleshooting work will now
+  take place in the API Gateway Console!
+</p>
+
+<p>
+  Now, to the real deal! <b>Your tasks in this challenge are</b>:
+</p><p>
+</p><p>
+  </p><ul><li>To <b>troubleshoot</b> the API misconfiguration and figure out why both API endpoints ("staging" and "prod")
+  return the same results despite the fact that you only updated the <i>staging</i> Lambda alias</li><li>To <b>fix</b> the issue so that these API endpoints return the expected results
+  (eg, {"greeting": "Hi, awsstudent!"} for <i>staging</i> (reflecting your changes to the Lambda code) and
+  {"greeting": "Hello, awsstudent!"} for <i>prod</i>)</li></ul>
+
+<h3>How do I know that I've solved this challenge?</h3>
+<p>
+  Open a web browser and visit the URL indicated in the Output Property
+  <i>CheckChallengeAnswerURL</i>. The answer to this challenge will be revealed to you once you have solved the challenge.
+</p>
+<p>
+   <b>Good luck!</b>
+</p>
+
+
+====================================================================================================
+[02] fix-my-research | TASK 3
+====================================================================================================
+
+TÍTULO: Lambda invocation still has errors
+VALIDAÇÃO: GLOBAL_STATIC_ANSWER
+INPUT ANSWER: True
+
+CONTEÚDO COMPLETO
+--------------------------------------------------------------------------------
+#### Background
+The answer to task 3 is a static, the secret is a hash string that can be printed by invoking lambda function "GenerateHashLambda". 
+
+Now that VPC Gateway Endpoint creation and fixing security group is out of way, lambda invocation still has issues. 
+
+#### Your Task
+
+The file in S3 seems to have been encrypted using a Customer Managed KMS key for which the role attached to lambda "GenerateHashLambda" does not have access.
+Use the below documentation to understand key policy and update it to provide lambda role permission to use the key.
+
+https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-overview.html
+
+#### Getting Started
+The "Output Properties" has the KMS Key ID to be updated.
+
+#### Inventory
+
+Work with the following resources
+
+- Generate Hash Lambda - FixResearchGenerateHashLambda
+- KMS Key - FixResearchKmsKey
+
+You can find the resource id's in the "Output Properties" of the challenge dashboard 
+
+
+====================================================================================================
+[03] gityourcryptoright | TASK 1
+====================================================================================================
+
+TÍTULO: Find the hidden password
+VALIDAÇÃO: GLOBAL_STATIC_ANSWER
+INPUT ANSWER: True
+
+CONTEÚDO COMPLETO
+--------------------------------------------------------------------------------
+## Background
+
+You're a security consultant and you've been tasked to review security posture of a new application that your customer has deployed. The CISO is concerned that developers are taking security shortcuts and leaving vulnerabilities in the application and possibly even purposely leaking sensitive data. The security team has heard several rumors and they'd like you to see if there's any truth to them.
+## Your Task
+
+**The latest rumor:** One of the developers doesn't want to remember the administration password for the application. Thinking he was being clever, he hid it somewhere "in plain sight" in the application so he can retrieve it with just his desktop Web browser and use it to derive the password. Your task is to follow up on this rumor and see if there's data hidden somewhere easily accessible to the public that can be used to derive the password.
+
+## Getting Started
+
+- The application has been deployed on a Web server. You can find the address of the server in the Output Properties for this challenge.
+- Visit the Web site with an ordinary browser and find the hidden data that can be used to derive the password.
+- Remember, the CISO assumes that you have experience with basic security, encryption, and binary encoding concepts and have access to the appropriate tools to complete the task.
+
+## Inventory
+- A single Web server hosting the application. Its address is in output properties.
+
+## Services You Should Use
+- No additional AWS services are required or available to complete this task.
+- You should use your own or public Web-based security and analysis tools.
+
+## Task Validation
+Once you have found the data and derived the password, enter the password in the box above and press submit.
+
+====================================================================================================
+[04] gityourcryptoright | TASK 2
+====================================================================================================
+
+TÍTULO: Search the Code Repo
+VALIDAÇÃO: GLOBAL_STATIC_ANSWER
+INPUT ANSWER: True
+
+CONTEÚDO COMPLETO
+--------------------------------------------------------------------------------
+Background
+
+## Background
+
+You're a security consultant and you've been tasked to review security posture of a new application that your customer has deployed. The CISO is concerned that developers are taking security shortcuts and leaving vulnerabilities in the application and possibly even purposely leaking sensitive data. The security team has heard several rumors and they'd like you to see if there's any truth to them.
+## Your Task
+
+**The latest rumors**: 
+- The security team overheard one of the developers talking about doing deployments by simply using **"cp -r"** to copy the entire application folder from the development environment to the Web server.
+- During security walkthrough, it was discovered that one of the developers accidentally included credentials in the source code in one of his commits. The security team told him that he should not do that, so the developer went back and removed the credentials and pushed a new commit.
+
+As a DevSecOps engineer, you realize that these two facts taken together can mean big trouble for the security of your application. Use these two facts together to find the password.
+
+## Getting Started
+
+- The application has been deployed on a Web server. You can find the address of the server in the Output Properties for this challenge.
+- If the application was deployed using **"cp -r"** from the development environment to the Web server, what would that mean?
+
+## Inventory
+- A single Web server hosting the application. Its address is in output properties.
+
+## Services You Should Use
+- No additional AWS services are required or available to complete this task.
+- You should use your own development tools to find the password.
+
+## Task Validation
+Once you have found the data and derived the password, enter the password in the box above and press submit.
+
+====================================================================================================
+[05] gityourcryptoright | TASK 5
+====================================================================================================
+
+TÍTULO: You better git to stepping up your crypto game
+VALIDAÇÃO: GLOBAL_STATIC_ANSWER
+INPUT ANSWER: True
+
+CONTEÚDO COMPLETO
+--------------------------------------------------------------------------------
+## Background
+
+You're a security consultant and you've been tasked to review security posture of a new application that your customer has deployed. The CISO is concerned that developers are taking security shortcuts and leaving vulnerabilities in the application and possibly even purposely leaking sensitive data. The security team has heard several rumors and they'd like you to see if there's any truth to them.
+
+## Your Task
+
+Now that you've helped discover and terminate the corporate spy, you can direct your attention back to evaluating the security posture of that new application.
+
+**The Latest Rumor:** The security team overheard the developers discussing a simplifying shortcut they used to handle encryption of sensitive data in the application, but the team didn't hear exactly what the developers did.
+
+Based on experience, you know that if this development team thought they were being clever, there's probably a security vulnerability you should try to find. Something about a shortcut used to encrypt data?
+
+## Getting Started
+
+- Given everything you've discovered in your earlier tasks, how could you figure out what shortcuts the developers took in the application's encryption method?
+
+## Inventory
+- A single Web server hosting the application. Its address is in output properties.
+- All of the extra assets you may have extracted in the previous tasks.
+
+## Services You Should Use
+- No additional AWS services are required or available to complete this task.
+- You'll need to find some data that the application has encrypted.
+- You should use your own development environment to break the compromised encryption used in the application and decrypt the encrypted data to find the password.
+
+## Task Validation
+Once you have found the data and derived the password, enter the password in the box above and press submit.
+
+====================================================================================================
+[06] movedbmanaged | TASK 2
+====================================================================================================
+
+TÍTULO: Move that DB
+VALIDAÇÃO: GLOBAL_STATIC_ANSWER
+INPUT ANSWER: True
+
+CONTEÚDO COMPLETO
+--------------------------------------------------------------------------------
+## Background
+
+Ok....so far so good, you created the option group and applied it to the Amazon RDS instance. Now you need to see if the database the dba's backed up for you to test can be restored. 
+
+## Your Task
+
+1. Restore the database using the backup in Amazon S3
+1. Query the number of Products within the Products table.
+
+## Getting Started
+
+1. Retrieve the login credentials from AWS Secrets Manager.
+1. Use AWS Systems Manager [Fleet Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/fleet-rdp.html#fleet-rdp-connect-to-node) to Remote Desktop to the EC2Jump Instance.  
+1. Open SQL Server Management Studio and login to the RDS SQL Server (Use same credentials as login to Windows)
+
+## Inventory
+
+* An EC2 Instance EC2Jump
+* Password Secret - Username and Password to use for Windows AND SQL Server Login (See Output Properties)
+* SQL Backup - Location of SQL Server Backup on Amazon S3 (See Output Properties)
+* The DNS Address of the RDS SQL Server (See Output Properties)
+
+## Services you should use
+
+* AWS Secrets Manager
+* AWS Systems Manager
+
+## Task Validation
+
+The DBA's want you to tell them the number of Products within the Products table to confirm if the Database was restored correctly. Enter the number into the Answer box.
+
+
+====================================================================================================
+[07] redshift-intro-games-jam | TASK 2
+====================================================================================================
+
+TÍTULO: Ingest data into Redshift Cluster and run queries 
+VALIDAÇÃO: GLOBAL_STATIC_ANSWER
+INPUT ANSWER: True
+
+CONTEÚDO COMPLETO
+--------------------------------------------------------------------------------
+Now that you have created a Redshift Cluster, you will load data to it. The data can be stored in S3, DynamoDB, other databases, or flat files. 
+
+Data stored in Amazon S3 can be ingested using a COPY command. Amazon S3 is an object storage service that allows storing large amounts of unstructured data like CSVs, logs, and media files. 
+
+A best practice is to load the raw data from S3 into Redshift tables for faster queries and analytics. Redshift can load data directly from files stored in Amazon S3 buckets. This allows you to easily move large datasets into Redshift without having to store the data locally or transfer it manually.
+
+Now that you've set up your data warehouse with Amazon Redshift Cluster, you can use the Amazon Redshift query editor v1 to load sample data. 
+- Make sure the Redshift Cluster is available before you start. Launch query editor from the Redshift cluster you have created. 
+- Connect to database by choosing the cluster you just created. Give Database name as dev and Database user as awsuser. Ignore any permissions error you might see. 
+- Create a table and a schema by using the following Structured Query Language (SQL) command. SQL is a standard programming language used to manage and analyze data. Give it a schema and tabel name
+
+		CREATE SCHEMA YOURSCHEMA;
+		CREATE TABLE YOURSCHEMA.YOURTABLE (
+			gameId BIGINT,
+			gameDuration BIGINT,
+			winner BIGINT,
+			firstBlood BIGINT, 
+			firstTower BIGINT,
+			firstInhibitor BIGINT,
+			firstBaron BIGINT, 
+			firstDragon BIGINT, 
+			firstRiftHerald BIGINT
+			);
+- Copy the data from s3 to Redshift by wiriting SQL statement to run a Copy command. For this you need to identify the S3 bucket and the IAM role ARN from the Output Properties section of the jam. The COPY should specify DATEFORMAT 'auto', CSV format, IGNOREHEADER 1, DELIMITER ',' and IGNOREBLANKLINES.
+- Write a SQL statement to Identify the average gameduration from your tabel where the winner is 1. 
+
+
+This process automates loading datasets from S3 into Redshift for faster analysis and BI. 
+
+Congrats! You have succesfully completed the challenge! 
+
+
+
+====================================================================================================
+[08] redshift-intro-games-jam | TASK 3
+====================================================================================================
+
+TÍTULO: USING REDSHIFT SPECTRUM TO QUERY DATA WITHOUT LOADING INTO S3
+VALIDAÇÃO: GLOBAL_STATIC_ANSWER
+INPUT ANSWER: True
+
+CONTEÚDO COMPLETO
+--------------------------------------------------------------------------------
+Amazon Redshift Spectrum allows you to run queries against exabytes of unstructured data in Amazon S3. It extends the analytic power of Amazon Redshift beyond data stored on local disks in your Redshift data warehouse.
+Redshift Spectrum leverages Redshift's fast query processing and integrates with other services like Lake Formation. You can query open file formats like CSV, Parquet, JSON, etc stored in S3 without having to load the data into Redshift tables.
+Redshift Spectrum benefits:
+
+* Query unstructured data in S3 without loading or transforming data
+* Massively parallel query execution using Redshift's Massively Parallel Processing (MPP) architecture 
+* Consistent performance querying small or large data sets
+* No ETL jobs needed to preprocess data for queries
+* Works for data stored across multiple S3 buckets
+* Granular security using S3 Access Control List (ACLs) and Redshift IAM roles
+
+Follow these steps to query data in S3 using Redshift Spectrum:
+-  Write a SQL statements to create an external schema and database in Redshift. Use the CREATE EXTERNAL SCHEMA command to define  your desired schema from DATA CATALOG. Add your desired database name and add IAM role arn.
+       
+- Create external table within the schema. Note find the s3 bucket from Output Properties section of the JAM and change the value. The /data indicates that the .csv file is found in the data folder within the S3 bucket. 
+        
+        CREATE EXTERNAL TABLE myschema.mytable
+            (
+               gameId          BIGINT,
+              gameDuration    BIGINT,
+                winner          BIGINT,
+                firstBlood      BIGINT, 
+                firstTower      BIGINT,
+                firstInhibitor  BIGINT,
+                firstBaron      BIGINT, 
+                firstDragon     BIGINT, 
+                firstRiftHerald BIGINT
+            )
+        ROW FORMAT DELIMITED
+        fields terminated by ','
+        LOCATION 's3Bucket/data'
+- Now you can query the data from S3. Write a SQL statement to identify the average gameduration from your tabel where the winner is 2.
+
+       
+
+Input the Average in the input box to complete the challenge.  
+Congrats! You have successfully completed the challenge! You have been able to use Redshift Spectrum to run SQL Queries without loading the data into Amazon S3
+
+====================================================================================================
+[09] tag-youre-it | TASK 1
+====================================================================================================
+
+TÍTULO: None
+VALIDAÇÃO: GLOBAL_STATIC_ANSWER
+INPUT ANSWER: True
+
+CONTEÚDO COMPLETO
+--------------------------------------------------------------------------------
+### Background
+You are the IAM Administrator for your AWS Accounts. You have two Projects: Blue and Orange that are launching and managing EC2 Instances in the same AWS Account.
+
+Your AWS Account has the following resources:
+* Two IAM Roles:
+  * ProjectBlueRole tagged with Project = Blue
+  * ProjectOrangeRole tagged with Project = Orange
+* Two EC2 Instances:
+  * Blue instance tagged with Project = Blue
+  * Orange instance tagged with Project = Orange
+* A Managed Policy: 'ManageEC2InstancesWithProjectTag' that is attached to the ProjectBlueRole and ProjectOrangeRole. This is overly permissive to start with and does not have any [IAM Conditions](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition.html) for the Actions.
+
+### Requirements
+Your job is to edit this policy document to meet the following three requirements:
+1. Restrict EC2 StartInstances &amp; StopInstances actions to EC2 Instances with Project tag values corresponding to the Roles ProjectOrangeRole and ProjectBlueRole.
+2. Allow EC2 RunInstances only if the EC2 Instances and Volumes are tagged on creation with Project tag values corresponding to the Roles ProjectOrangeRole and ProjectBlueRole. Ensure that the only tag key allowed on creation is 'Project' with an exact case match.
+3. Ensure that tags cannot be changed on EC2 Instances and Volumes after creation.
+
+Hint: it may help to save a copy of the original policy document before you make changes so you can always go back and start over.
+
+### Getting Test Results
+After saving changes to the Managed Policy wait 20 seconds and browse to or refresh the VerifierUri from the Output Properties. This page displays results of test cases for the above requirements (green means the test passed, red means the test failed). When all tests pass you'll get the Challenge Answer at the bottom of the same page.
+
+### Helpful Links
+Here are a few links to help you with the challenge:
+* [Actions, Resources and Condition Keys for Amazon EC2](https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonec2.html)
+* [AWS Global Condition Context Keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html)
+* [Example IAM Policies for EC2 RunInstances with Tags](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ExamplePolicies_EC2.html#iam-example-runinstances-tags)
+
+
+====================================================================================================
+[10] webpage-styling-broken | TASK 1
+====================================================================================================
+
+TÍTULO: Identify the cause for the broken website
+VALIDAÇÃO: GLOBAL_STATIC_ANSWER
+INPUT ANSWER: True
+
+CONTEÚDO COMPLETO
+--------------------------------------------------------------------------------
+<b> Background </b>
+
+Your manager informed you via email of the current issue, which is directly affecting customers and costing them revenue. You must ascertain the problem with the malfunctioning website as soon as possible. Identifying the section of the website that isn't loading correctly is the first step.
+
+<b> Your Task </b>
+
+Your task is to identify which website file is not accessible 
+and returning an **403** error code.
+
+<b> Getting Started </b>
+
+- Go to the <code>Output Properties</code> tab 
+on the left side and grab the URL for **WebsiteDomain**.
+- Open the URL in any web browser.
+- Use browser developer console to determine 
+which file is being requested by the browser 
+to render the webpage but returning 403 error code.
+
+<b> Inventory </b>
+
+- URL for broken website is provided in the <code>Output Properties</code> tab.
+
+<b> Services you should use </b>
+
+- Any web browser
+
+<b> Task Validation </b>
+
+Type in name of the file which is not loading correctly and 
+shows **403** error code in status column.
+
+
+====================================================================================================
+[11] wordpress-breach-quest | TASK 3
+====================================================================================================
+
+TÍTULO: What went wrong with SSH?
+VALIDAÇÃO: GLOBAL_STATIC_ANSWER
+INPUT ANSWER: True
+
+CONTEÚDO COMPLETO
+--------------------------------------------------------------------------------
+#### Background
+---
+With the rogue user account from WordPress deleted, the security team requires your assistance in determining the exact username that was used to access the Amazon Lightsail Instance over SSH. While the user does not exist on the OS, so any attempts to SSH would have been failed. Examine ways to retrieve the invalid username to close the incident report.
+
+#### Your Task
+---
+- Access the AWS console
+- Connect to the Amazon Lightsail Instance through SSH protocol
+- Retrieve the invalid username that was used to SSH
+
+#### Getting Started
+---
+- **Access the AWS console** - Access the AWS account by clicking the button *AWS Console* once you've started the challenge.
+- **Connect to the Amazon Lightsail Instance SSH protocol** - Click on the *Output Properties* tab present in this challenge to retrieve the direct URL to access the Amazon Lightsail Instance through SSH. The property would be **CompromisedLightsailInstance**
+- **Retrieve the invalid username that was used to SSH** - Retrieve the username which was used to attempt an SSH connection to the Amazon Lightsail Instance. The SSH attempt was made to the localhost address `::1`.
+
+#### Inventory
+---
+- Amazon Lightsail Instance named - "**CompromisedLightsailInstance**"
+
+#### Services you should use
+---
+- Amazon Lightsail
+
+#### Task Validation
+---
+The task would be automatically completed once the username has been provided. In addition you can always check your progress by clicking the “Check my progress” button in the challenge details screen.
+
+====================================================================================================
+[12] xray-serverless | TASK 1
+====================================================================================================
+
+TÍTULO: None
+VALIDAÇÃO: GLOBAL_STATIC_ANSWER
+INPUT ANSWER: True
+
+CONTEÚDO COMPLETO
+--------------------------------------------------------------------------------
+# Summary<br />
+The REST Sales API has been created in API Gateway with one method to retrieve the top 10 sales of your company in 2017. The first version of the API has already been deployed by the creation of the "v1" Deployment Stage. 
+<br /><br />The API calls a Lambda function developed in Python 3.9 with the business logic to query a database table and prepare the response to the user. With the intent of applying architecture best practices, the developer created some versions, an alias, and layers for the function. 
+<br /><br />All sales data is in a DynamoDB table. 
+<br /><br />Open a Web Browser and visit the Sales URL created by the API Gateway to test the application. Currently, it is returning a 5XX status, but the error message is not always the same.
+<br /><br />In order to investigate the problems, it's important to have the appropriate tools to troubleshoot and understand the end-to-end flow of the application. 
+# Solving this Challenge
+To complete this challenge, you will have to first enable X-Ray in all layers of the application to understand the flow and identify bottlenecks. CloudWatch is also available to display error details added in the logs.
+<br /><br />After you detect the problems, you will be able to fix the issues in the API Gateway, Lambda and DynamoDB services via AWS Console. 
+# Important Parameters
+Take note of the following information in Output Properties: 
+<br />- *SalesAPIURL*: URL of the API which returns the top 10 sales of 2017
+<br />- *ValidateAPIURL*: URL of the API which generates a hash for the answer
+# How do I know that I've solved this challenge? 
+The answer of this challenge will be the hash generated by the /validate API. Open a Web Browser and visit this URL and paste the hash as the answer.
+<br />To generate a valid hash, the /sales must return at least the top 3 sales in less than one second!
+<br /><br />**Good luck!**
+

@@ -40,8 +40,8 @@ def get_events(page):
     url = f"{HOST}/admin/events"
 
     params = {
-        "dateRangeEnd": "2026-08-13T16:51:48.890Z",
-        "dateRangeStart": "2026-07-14T16:51:48.890Z",
+        "dateRangeEnd": "2027-01-01T00:00:00.000Z",
+        "dateRangeStart": "2020-01-01T00:00:00.000Z",
         "includeEndedEvents": "true",
         "limit": 150,
         "page": page,
@@ -163,7 +163,7 @@ def main():
 
     challenge_ids = set()
 
-    for page in range(1, 20):
+    for page in range(1, 100):
 
         print(
             f"[EVENTS] Consultando página {page}..."

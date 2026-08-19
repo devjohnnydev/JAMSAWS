@@ -667,6 +667,83 @@
       align-items: center;
       gap: 10px;
     }
+
+    /* Library CSS layout */
+    .library-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    @media (min-width: 768px) {
+      .library-grid {
+        grid-template-columns: 250px 1fr;
+      }
+    }
+
+    .lib-list-container {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 14px;
+      border: 1px solid var(--card-border);
+      padding: 12px;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+
+    .lib-search-box {
+      margin-bottom: 12px;
+    }
+
+    .lib-list-item {
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+      transition: background 0.2s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .lib-list-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .lib-list-item.active {
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .lib-detail-card {
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 14px;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      min-height: 400px;
+    }
+
+    .lib-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .lib-meta-box {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .lib-meta-val {
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-top: 4px;
+    }
   </style>
 </head>
 <body>
@@ -685,6 +762,7 @@
     <div class="tab active" onclick="switchTab('competicao')">⏱️ Competição</div>
     <div class="tab" onclick="switchTab('leaderboard')">🏆 Placar Geral</div>
     <div class="tab" onclick="switchTab('metricas')">📊 Minhas Métricas</div>
+    <div class="tab" onclick="switchTab('library')">📚 Biblioteca de Jams</div>
     <div class="tab" onclick="switchTab('customizer')">⚙️ Customizar Jams</div>
   </div>
 
@@ -871,6 +949,32 @@
     </div>
   </div>
 
+  <!-- PANEL: LIBRARY (BIBLIOTECA DE DOCUMENTAÇÃO DE JAMS) -->
+  <div id="panel-library" class="app-panel">
+    <div class="card">
+      <h2 class="card-title">📚 Biblioteca de Jams da AWS (<span id="lib-total-count">0</span> cadastrados)</h2>
+      
+      <div class="library-grid">
+        <!-- Left: Search & List -->
+        <div>
+          <div class="lib-search-box">
+            <input type="text" id="lib-search-input" placeholder="Pesquisar desafio..." onkeyup="filterLibrary()">
+          </div>
+          <div class="lib-list-container" id="lib-list-container">
+            <!-- JS populated list -->
+          </div>
+        </div>
+
+        <!-- Right: Detail view -->
+        <div class="lib-detail-card" id="lib-detail-card">
+          <div style="text-align: center; color: var(--text-muted); padding-top: 100px;">
+            Selecione um desafio na lista ao lado para ver sua documentação detalhada.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- PANEL: CUSTOMIZER -->
   <div id="panel-customizer" class="app-panel">
     <div class="card" style="margin-bottom: 24px;">
@@ -942,29 +1046,27 @@
 
   // Prepopulated Default Catalog Pool
   const DEFAULT_JAMS_POOL = [
-    { id: "p1", type: "easy", name: "Jam 1 - Inicialização & Config" },
-    { id: "p2", type: "easy", name: "Jam 2 - Sintaxe Básica" },
-    { id: "p3", type: "easy", name: "Jam 3 - Loops Simples" },
-    { id: "p4", type: "easy", name: "Jam 4 - Condicionais Básicas" },
-    
-    { id: "p5", type: "medium", name: "Jam 5 - Arrays 1D" },
-    { id: "p6", type: "medium", name: "Jam 6 - Manipulação de Strings" },
-    { id: "p7", type: "medium", name: "Jam 7 - Condicionais Compostos" },
-    { id: "p8", type: "medium", name: "Jam 8 - Operações Matemáticas" },
-    { id: "p9", type: "medium", name: "Jam 9 - Funções Utilitárias" },
-    { id: "p10", type: "medium", name: "Jam 10 - Busca Simples" },
-    { id: "p11", type: "medium", name: "Jam 11 - Ordenação & Filtros" },
-    { id: "p12", type: "medium", name: "Jam 12 - Validação de Formulário" },
-    { id: "p13", type: "medium", name: "Jam 13 - Consumo de JSON" },
-    { id: "p14", type: "medium", name: "Jam 14 - Armazenamento Local" },
-    { id: "p15", type: "medium", name: "Jam 15 - Eventos DOM Avançados" },
-    
-    { id: "p16", type: "hard", name: "Jam 16 - Recursão Complexa" },
-    { id: "p17", type: "hard", name: "Jam 17 - Estruturas de Dados Dinâmicas" },
-    { id: "p18", type: "hard", name: "Jam 18 - Algoritmo de Grafos" },
-    { id: "p19", type: "hard", name: "Jam 19 - Otimização de Performance" },
-    { id: "p20", type: "hard", name: "Jam 20 - Resolução de Promises Concorrentes" },
-    { id: "p21", type: "hard", name: "Jam 21 - Criptografia Simples" }
+    { id: "p1", type: "easy", name: "Jam 1 - Inicialização & Config", content: "Primeiro passo da infraestrutura do laboratório." },
+    { id: "p2", type: "easy", name: "Jam 2 - Sintaxe Básica", content: "Fixação da sintaxe básica." },
+    { id: "p3", type: "easy", name: "Jam 3 - Loops Simples", content: "Iterações fundamentais." },
+    { id: "p4", type: "easy", name: "Jam 4 - Condicionais Básicas", content: "Controle de fluxo básico." },
+    { id: "p5", type: "medium", name: "Jam 5 - Arrays 1D", content: "Vetores unidimensionais." },
+    { id: "p6", type: "medium", name: "Jam 6 - Manipulação de Strings", content: "Strings e buscas de regex." },
+    { id: "p7", type: "medium", name: "Jam 7 - Condicionais Compostos", content: "Lógica booleana complexa." },
+    { id: "p8", type: "medium", name: "Jam 8 - Operações Matemáticas", content: "Cálculos matemáticos e modularidade." },
+    { id: "p9", type: "medium", name: "Jam 9 - Funções Utilitárias", content: "Modularização do código." },
+    { id: "p10", type: "medium", name: "Jam 10 - Busca Simples", content: "Busca linear e mapeamento." },
+    { id: "p11", type: "medium", name: "Jam 11 - Ordenação & Filtros", content: "Ordenamento bolha e filtros de dados." },
+    { id: "p12", type: "medium", name: "Jam 12 - Validação de Formulário", content: "Segurança de entrada de dados." },
+    { id: "p13", type: "medium", name: "Jam 13 - Consumo de JSON", content: "Parsing de objetos no backend." },
+    { id: "p14", type: "medium", name: "Jam 14 - Armazenamento Local", content: "Persistência do estado do navegador." },
+    { id: "p15", type: "medium", name: "Jam 15 - Eventos DOM Avançados", content: "Captura de interações dinâmicas." },
+    { id: "p16", type: "hard", name: "Jam 16 - Recursão Complexa", content: "Algoritmos recursivos complexos." },
+    { id: "p17", type: "hard", name: "Jam 17 - Estruturas de Dados Dinâmicas", content: "Pilhas, filas e listas dinâmicas." },
+    { id: "p18", type: "hard", name: "Jam 18 - Algoritmo de Grafos", content: "Busca em profundidade em nós de grafos." },
+    { id: "p19", type: "hard", name: "Jam 19 - Otimização de Performance", content: "Refatoração de loops para performance linear." },
+    { id: "p20", type: "hard", name: "Jam 20 - Resolução de Promises Concorrentes", content: "Assincronismo paralelo." },
+    { id: "p21", type: "hard", name: "Jam 21 - Criptografia Simples", content: "Hashing de dados." }
   ];
 
   let state = {
@@ -993,9 +1095,13 @@
           state.jamsPool = data;
           saveState();
           renderJamsPool();
+          populateLibrary();
         }
       })
-      .catch(err => console.log('Running locally or standalone mode: Using pre-configured Jams pool.'));
+      .catch(err => {
+        console.log('Running locally or standalone mode: Using pre-configured Jams pool.');
+        populateLibrary();
+      });
 
     updateRetrainHUD();
   }
@@ -1033,6 +1139,7 @@
     if (tabId === 'leaderboard') renderLeaderboard();
     if (tabId === 'metricas') renderMyMetrics();
     if (tabId === 'customizer') renderJamsPool();
+    if (tabId === 'library') populateLibrary();
     if (tabId === 'competicao') updateRetrainHUD();
   }
 
@@ -1042,7 +1149,6 @@
     let mediumPool = state.jamsPool.filter(j => j.type === 'medium');
     let hardPool = state.jamsPool.filter(j => j.type === 'hard');
 
-    // Fallback: If we don't have enough medium Jams, borrow from easyPool to prevent crash
     if (mediumPool.length < 9) {
       const needed = 9 - mediumPool.length;
       if (easyPool.length > 1) {
@@ -1187,7 +1293,7 @@ Atualmente você tem:
     }
 
     document.getElementById('jams-done-count').textContent = state.currentSession.completedCount;
-    document.getElementById('session-hints-count').textContent = state.currentSession.totalHints;
+    document.getElementById('session-hints-hud').textContent = state.currentSession.totalHints;
   }
 
   function renderJamsGrid() {
@@ -1229,7 +1335,6 @@ Atualmente você tem:
     document.getElementById('active-jam-card').style.display = 'block';
     document.getElementById('active-jam-name').textContent = jam.name;
     
-    // Inject and format Jam instructions description block
     const descEl = document.getElementById('active-jam-description');
     descEl.textContent = jam.content || "Nenhuma instrução ou descrição disponível para este desafio.";
     
@@ -1305,7 +1410,6 @@ Atualmente você tem:
     const jam = state.currentSession.jams.find(j => j.id === state.currentSession.activeJamId);
     jam.hints++;
     
-    // Add 1 minute penalty directly to timeSpent
     jam.timeSpent += 60;
     state.currentSession.totalHints++;
     
@@ -1344,7 +1448,6 @@ Atualmente você tem:
     }
   }
 
-  // End Session
   function endSession(isTimeout) {
     if (sessionTimerInterval) clearInterval(sessionTimerInterval);
     if (jamTimerInterval) clearInterval(jamTimerInterval);
@@ -1366,7 +1469,6 @@ Atualmente você tem:
       jams: session.jams
     };
 
-    // Track points of difficulties
     session.jams.forEach(jam => {
       const isSlow = (jam.type === 'hard' && jam.timeSpent > 420) || 
                      (jam.type === 'medium' && jam.timeSpent > 210) || 
@@ -1385,7 +1487,6 @@ Atualmente você tem:
 
     state.leaderboard.push(newRecord);
     
-    // Sort Leaderboard
     state.leaderboard.sort((a, b) => {
       if (b.completedCount !== a.completedCount) return b.completedCount - a.completedCount;
       if (a.totalHints !== b.totalHints) return a.totalHints - b.totalHints;
@@ -1398,7 +1499,6 @@ Atualmente você tem:
     state.currentSession = null;
     saveState();
 
-    // Setup success UI
     const titleEl = document.getElementById('modal-title');
     const textEl = document.getElementById('modal-text');
 
@@ -1695,6 +1795,106 @@ Atualmente você tem:
     state.jamsPool = [...DEFAULT_JAMS_POOL];
     saveState();
     renderJamsPool();
+  }
+
+  // --- BIBLIOTECA DE DOCUMENTAÇÃO DE JAMS ---
+  function populateLibrary() {
+    const listContainer = document.getElementById('lib-list-container');
+    listContainer.innerHTML = '';
+
+    document.getElementById('lib-total-count').textContent = state.jamsPool.length;
+
+    state.jamsPool.forEach((jam, idx) => {
+      const div = document.createElement('div');
+      div.className = 'lib-list-item';
+      div.textContent = jam.name;
+      div.title = jam.name;
+      div.onclick = () => selectLibraryJam(jam.id, div);
+      listContainer.appendChild(div);
+      
+      // Auto-select first item
+      if (idx === 0) selectLibraryJam(jam.id, div);
+    });
+  }
+
+  function filterLibrary() {
+    const query = document.getElementById('lib-search-input').value.toLowerCase();
+    const items = document.querySelectorAll('.lib-list-item');
+    items.forEach(item => {
+      const text = item.textContent.toLowerCase();
+      if (text.includes(query)) {
+        item.style.display = 'block';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  }
+
+  function selectLibraryJam(jamId, element) {
+    document.querySelectorAll('.lib-list-item').forEach(x => x.classList.remove('active'));
+    if (element) element.classList.add('active');
+
+    const jam = state.jamsPool.find(j => j.id === jamId);
+    const detailContainer = document.getElementById('lib-detail-card');
+    if (!jam) return;
+
+    // Parse Services & Validation Instructions dynamically from content
+    let services = "AWS Cloud Services";
+    let validation = "Validado via inserção de flag de resposta estática no console.";
+    let targetTime = "4 minutos";
+
+    if (jam.type === 'easy') targetTime = "1m 30s";
+    if (jam.type === 'hard') targetTime = "7 minutos";
+
+    if (jam.content) {
+      // Find Services in content
+      const servicesMatch = jam.content.match(/(?:Services You Should Use|Inventory|Inventory:)([\s\S]*?)(?:##|###|$)/i);
+      if (servicesMatch && servicesMatch[1]) {
+        services = servicesMatch[1].replace(/[-*`#]/g, '').trim().split('\n').map(s => s.trim()).filter(s => s).slice(0, 4).join(', ');
+      }
+      
+      // Find Validation rule in content
+      const validationMatch = jam.content.match(/(?:Task Validation|Validation|Como validar)([\s\S]*?)(?:##|###|$)/i);
+      if (validationMatch && validationMatch[1]) {
+        validation = validationMatch[1].replace(/[-*`#]/g, '').trim();
+      }
+    }
+
+    let diffColor = 'var(--easy)';
+    if (jam.type === 'medium') diffColor = 'var(--medium)';
+    if (jam.type === 'hard') diffColor = 'var(--hard)';
+
+    detailContainer.innerHTML = `
+      <h2 style="font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 15px;">${jam.name}</h2>
+      
+      <div class="lib-meta-grid">
+        <div class="lib-meta-box">
+          <div class="hud-label">Dificuldade</div>
+          <div class="lib-meta-val" style="color: ${diffColor}; text-transform: uppercase;">${jam.type}</div>
+        </div>
+        <div class="lib-meta-box">
+          <div class="hud-label">Tempo Recomendado</div>
+          <div class="lib-meta-val">${targetTime}</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <h3 style="font-size: 1rem; color: #fff; margin-bottom: 6px;">🛠️ Serviços Principais Utilizados:</h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.4;">${services}</p>
+      </div>
+
+      <div style="margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; border-left: 3px solid var(--accent);">
+        <h3 style="font-size: 1rem; color: var(--accent); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">💡 Critérios de Validação:</h3>
+        <p style="font-size: 0.88rem; color: var(--text); line-height: 1.4;">${validation}</p>
+      </div>
+
+      <div>
+        <h3 style="font-size: 1rem; color: #fff; margin-bottom: 10px;">📋 Instruções Completas do Desafio:</h3>
+        <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; max-height: 350px; overflow-y: auto; font-size: 0.85rem; line-height: 1.6; white-space: pre-wrap; color: var(--text-muted);">
+          ${jam.content || 'Nenhuma instrução disponível para este desafio.'}
+        </div>
+      </div>
+    `;
   }
 
   // Load storage state
